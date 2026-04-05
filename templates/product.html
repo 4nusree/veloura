@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Veloura — Product Detail." />
+  <title>Product — Veloura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/redesign.css') }}" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="vl-header" role="banner">
+    <div class="vl-header-container">
+      <div class="vl-nav-pill">
+        <button class="vl-logo-link vl-logo-btn" id="vlLogoBtn" aria-label="Open menu" data-testid="button-logo-sidebar">
+          <div class="vl-logo-circle">
+            <img src="/static/images/veloura_logo.jpeg" alt="Veloura" class="vl-logo-img" />
+          </div>
+        </button>
+        <a href="/" class="vl-brand-name" data-testid="link-brand-home">VELOURA</a>
+        <div class="vl-nav-icons">
+          <div class="vl-search-wrap" id="vlSearchWrap">
+            <button class="vl-icon-circle" id="vlSearchBtn" aria-label="Search" data-testid="button-search-toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <div class="vl-search-drop" id="vlSearchDrop">
+              <input type="text" class="vl-search-input" id="vlSearchInput" placeholder="Search products…" aria-label="Search products" data-testid="input-search" />
+              <button class="vl-search-go" id="vlSearchGo" aria-label="Submit search" data-testid="button-search-submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+            </div>
+          </div>
+          <a href="/cart" class="vl-icon-circle vl-cart-icon" aria-label="View cart" data-testid="button-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span class="vl-badge cart-count" id="cartCount" data-testid="text-cart-count">0</span>
+          </a>
+          <div id="auth-action" class="vl-auth-action">
+            <a href="/login" class="vl-icon-circle" aria-label="Login" data-testid="button-login-default">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+          <button class="vl-hamburger" id="vlHamburger" aria-label="Toggle menu" aria-expanded="false" data-testid="button-hamburger">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="vl-mobile-menu" id="vlMobileMenu" aria-hidden="true">
+      <a href="/" class="vl-mobile-link" data-testid="link-mobile-home">Home</a>
+      <a href="/shop" class="vl-mobile-link" data-testid="link-mobile-shop">Shop</a>
+      <a href="/cart" class="vl-mobile-link" data-testid="link-mobile-cart">Cart</a>
+      <a href="/login" class="vl-mobile-link" data-testid="link-mobile-login">Login / Register</a>
+    </div>
+  </header>
+
+  <div class="vl-sidebar-overlay" id="vlSidebarOverlay" data-testid="sidebar-overlay"></div>
+  <nav class="vl-sidebar" id="vlSidebar" aria-label="Main navigation" data-testid="sidebar-nav">
+    <div class="vl-sidebar-header">
+      <div class="vl-sidebar-logo"><img src="/static/images/veloura_logo.jpeg" alt="Veloura" /></div>
+      <span class="vl-sidebar-brand">VELOURA</span>
+      <button class="vl-sidebar-close" id="vlSidebarClose" aria-label="Close menu" data-testid="button-sidebar-close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="vl-sidebar-links">
+      <li><a href="/" class="vl-sidebar-link" data-testid="sidebar-link-home"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
+      <li><a href="/information" class="vl-sidebar-link" data-testid="sidebar-link-information"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Information Desk</a></li>
+      <li><a href="/contact" class="vl-sidebar-link" data-testid="sidebar-link-contact"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- PRODUCT DETAIL PAGE -->
+  <main class="pd-page" data-testid="product-detail-page">
+
+    <!-- Back link -->
+    <a href="/shop" class="pd-back" data-testid="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Shop
+    </a>
+
+    <!-- Loading / Error state -->
+    <div id="pd-loading" class="pd-state-msg" data-testid="text-pd-loading">Loading product…</div>
+    <div id="pd-error" class="pd-state-msg pd-state-msg--error" style="display:none;"
+         data-testid="text-pd-error">Product not found.</div>
+
+    <!-- Product layout (hidden until loaded) -->
+    <div id="pd-content" class="pd-content" style="display:none;" data-testid="pd-content">
+
+      <!-- Left: Gallery -->
+      <div class="pd-image-col">
+        <div class="pd-gallery" data-testid="pd-gallery">
+
+          <!-- Category badge -->
+          <span id="pd-category-badge" class="pd-category-badge" data-testid="text-pd-category"></span>
+
+          <!-- Wishlist heart -->
+          <button id="pd-wish-btn" class="pd-wish-icon" aria-label="Save to wishlist"
+                  data-testid="button-pd-wishlist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+
+          <!-- Main preview -->
+          <div class="pd-main-preview" data-testid="pd-main-preview">
+            <img id="pd-main-img" src="" alt="" class="pd-main-img" data-testid="img-product-detail" />
+            <video id="pd-main-video" class="pd-main-video" controls style="display:none;"
+                   data-testid="video-product-detail"></video>
+          </div>
+
+          <!-- Thumbnail strip -->
+          <div id="pd-thumbnails" class="pd-thumbnails" data-testid="pd-thumbnails"></div>
+
+        </div>
+      </div>
+
+      <!-- Right: Details -->
+      <div class="pd-info-col">
+
+        <p class="pd-eyebrow">VELOURA Collection</p>
+        <h1 id="pd-name" class="pd-name" data-testid="text-pd-name"
+            style="font-family: 'Playfair Display', Georgia, serif;"></h1>
+
+        <!-- Rating Summary -->
+        <div class="pd-rating-summary" id="pd-rating-summary" data-testid="pd-rating-summary">
+          <div class="pd-stars" id="pd-stars-display"></div>
+          <span class="pd-rating-text" id="pd-rating-text" data-testid="text-pd-rating"></span>
+        </div>
+
+        <p id="pd-price" class="pd-price" data-testid="text-pd-price"></p>
+
+        <div class="pd-divider"></div>
+
+        <!-- Size Selector -->
+        <div class="pd-option-group" id="pd-size-group">
+          <div class="pd-option-label">
+            Size
+            <span id="pd-selected-size" class="pd-selected-value" data-testid="text-selected-size"></span>
+          </div>
+          <div id="pd-size-btns" class="pd-size-btns" data-testid="size-selector" role="group" aria-label="Select size"></div>
+        </div>
+
+        <!-- Color Selector -->
+        <div class="pd-option-group" id="pd-color-group">
+          <div class="pd-option-label">
+            Color
+            <span id="pd-selected-color" class="pd-selected-value" data-testid="text-selected-color"></span>
+          </div>
+          <div id="pd-color-btns" class="pd-color-btns" data-testid="color-selector" role="group" aria-label="Select color"></div>
+        </div>
+
+        <!-- Validation Message -->
+        <div id="pd-validation-msg" class="pd-validation-msg" style="display:none;"
+             data-testid="text-pd-validation">
+          Please select a size and color before adding to cart.
+        </div>
+
+        <!-- Add to Cart -->
+        <button id="pd-add-btn" class="pd-add-btn" data-testid="button-pd-add-to-cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          Add to Cart
+        </button>
+
+        <!-- Buy Now -->
+        <button id="pd-buy-btn" class="pd-buy-btn" data-testid="button-pd-buy-now">
+          Buy Now
+        </button>
+
+        <div class="pd-divider"></div>
+
+        <!-- Meta -->
+        <div class="pd-meta-list">
+          <div class="pd-meta-row">
+            <span class="pd-meta-key">Category</span>
+            <span id="pd-meta-category" class="pd-meta-val" data-testid="text-pd-meta-category"></span>
+          </div>
+          <div class="pd-meta-row">
+            <span class="pd-meta-key">SKU</span>
+            <span id="pd-meta-sku" class="pd-meta-val" data-testid="text-pd-meta-sku"></span>
+          </div>
+          <div class="pd-meta-row">
+            <span class="pd-meta-key">Availability</span>
+            <span id="pd-availability" class="pd-meta-val pd-in-stock" data-testid="text-pd-availability">In Stock</span>
+          </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="pd-trust-badges" data-testid="pd-trust-badges">
+          <div class="pd-trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Secure Payment</span>
+          </div>
+          <div class="pd-trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Free Shipping ₹999+</span>
+          </div>
+          <div class="pd-trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Easy 7-Day Returns</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== PRODUCT DETAILS TABS (below grid) ===================== -->
+    <div id="pd-tabs-section" class="pd-tabs-section" style="display:none;" data-testid="pd-tabs-section">
+      <div class="pd-tabs-header">
+        <button class="pd-tab-btn active" data-tab="description" data-testid="tab-description">Description</button>
+        <button class="pd-tab-btn" data-tab="materials" data-testid="tab-materials">Materials & Care</button>
+        <button class="pd-tab-btn" data-tab="shipping" data-testid="tab-shipping">Shipping & Returns</button>
+      </div>
+      <div class="pd-tab-panels">
+        <div class="pd-tab-panel active" id="tab-panel-description" data-testid="tab-panel-description">
+          <p id="pd-description-text"></p>
+          <ul class="pd-detail-list" id="pd-detail-bullets"></ul>
+        </div>
+        <div class="pd-tab-panel" id="tab-panel-materials" data-testid="tab-panel-materials">
+          <ul class="pd-detail-list">
+            <li>Premium quality fabric with a luxurious feel</li>
+            <li>Ethically sourced materials</li>
+            <li>Machine wash cold on gentle cycle</li>
+            <li>Do not bleach; tumble dry low</li>
+            <li>Iron on low heat; dry clean recommended for best results</li>
+          </ul>
+        </div>
+        <div class="pd-tab-panel" id="tab-panel-shipping" data-testid="tab-panel-shipping">
+          <ul class="pd-detail-list">
+            <li>Free standard shipping on orders above ₹999</li>
+            <li>Express delivery available (2–3 business days)</li>
+            <li>Standard delivery in 5–7 business days across India</li>
+            <li>Easy 7-day hassle-free return policy</li>
+            <li>Full refund or exchange for unused items in original packaging</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== RATINGS & REVIEWS ===================== -->
+    <div id="pd-reviews-section" class="pd-reviews-section" style="display:none;" data-testid="pd-reviews-section">
+      <div class="pd-section-header">
+        <h2 class="pd-section-title" style="font-family:'Playfair Display',Georgia,serif;">Customer Reviews</h2>
+      </div>
+
+      <!-- Rating Overview -->
+      <div class="pd-rating-overview" data-testid="pd-rating-overview">
+        <div class="pd-rating-big">
+          <span class="pd-rating-number" id="pd-avg-rating">0.0</span>
+          <div class="pd-stars-big" id="pd-avg-stars"></div>
+          <span class="pd-rating-count" id="pd-review-count">0 reviews</span>
+        </div>
+        <div class="pd-rating-bars" id="pd-rating-bars"></div>
+      </div>
+
+      <!-- Reviews List -->
+      <div id="pd-reviews-list" class="pd-reviews-list" data-testid="pd-reviews-list">
+        <p class="pd-no-reviews" id="pd-no-reviews" style="display:none;" data-testid="text-no-reviews">No reviews yet. Be the first to share your experience!</p>
+      </div>
+
+      <!-- Write a Review -->
+      <div class="pd-write-review" data-testid="pd-write-review">
+        <h3 class="pd-write-review-title" style="font-family:'Playfair Display',Georgia,serif;">Share Your Experience</h3>
+        <form id="pd-review-form" class="pd-review-form" data-testid="form-review" novalidate>
+          <div class="pd-review-form-row">
+            <div class="pd-form-group">
+              <label class="pd-form-label" for="review-name">Your Name</label>
+              <input type="text" id="review-name" class="pd-form-input" placeholder="e.g. Priya S." data-testid="input-review-name" />
+            </div>
+            <div class="pd-form-group">
+              <label class="pd-form-label">Your Rating</label>
+              <div class="pd-star-picker" id="pd-star-picker" data-testid="star-picker" role="group" aria-label="Select rating">
+                <button type="button" class="pd-star-pick" data-val="1" data-testid="star-pick-1" aria-label="1 star">★</button>
+                <button type="button" class="pd-star-pick" data-val="2" data-testid="star-pick-2" aria-label="2 stars">★</button>
+                <button type="button" class="pd-star-pick" data-val="3" data-testid="star-pick-3" aria-label="3 stars">★</button>
+                <button type="button" class="pd-star-pick" data-val="4" data-testid="star-pick-4" aria-label="4 stars">★</button>
+                <button type="button" class="pd-star-pick" data-val="5" data-testid="star-pick-5" aria-label="5 stars">★</button>
+              </div>
+            </div>
+          </div>
+          <div class="pd-form-group">
+            <label class="pd-form-label" for="review-comment">Your Review</label>
+            <textarea id="review-comment" class="pd-form-textarea" rows="4" placeholder="Tell others what you think about this product…" data-testid="textarea-review-comment"></textarea>
+          </div>
+          <div class="pd-form-group">
+            <label class="pd-form-label" for="review-image-url">Product Photo URL <span class="pd-form-optional">(optional)</span></label>
+            <input type="url" id="review-image-url" class="pd-form-input" placeholder="https://example.com/your-photo.jpg" data-testid="input-review-image" />
+            <p class="pd-form-hint">Share a link to your own product photo (e.g. from Google Drive, Imgur, etc.)</p>
+          </div>
+          <div id="pd-review-error" class="pd-review-error" style="display:none;" data-testid="text-review-error"></div>
+          <button type="submit" class="pd-submit-review-btn" data-testid="button-submit-review">
+            Submit Review
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===================== SIMILAR PRODUCTS ===================== -->
+    <div id="pd-similar-section" class="pd-extras-section" style="display:none;" data-testid="pd-similar-section">
+      <div class="pd-section-header">
+        <h2 class="pd-section-title" style="font-family:'Playfair Display',Georgia,serif;">You May Also Like</h2>
+        <a id="pd-similar-view-all" href="/shop" class="pd-view-all-link" data-testid="link-similar-view-all">View All</a>
+      </div>
+      <div id="pd-similar-grid" class="pd-extras-grid" data-testid="pd-similar-grid"></div>
+    </div>
+
+    <!-- ===================== RECENTLY VIEWED ===================== -->
+    <div id="pd-recent-section" class="pd-extras-section" style="display:none;" data-testid="pd-recent-section">
+      <div class="pd-section-header">
+        <h2 class="pd-section-title" style="font-family:'Playfair Display',Georgia,serif;">Recently Viewed</h2>
+      </div>
+      <div id="pd-recent-grid" class="pd-extras-grid" data-testid="pd-recent-grid"></div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer footer--rich" role="contentinfo" data-testid="footer">
+    <div class="footer-rich-grid">
+      <!-- Brand -->
+      <div class="footer-col" data-testid="footer-brand-col">
+        <a href="/" aria-label="Veloura Home">
+          <img src="/static/images/logo_transparent.png" alt="Veloura" style="height:52px; width:auto; margin-bottom:12px;" />
+        </a>
+        <p class="footer-tagline">Elegance Redefined.</p>
+        <p class="footer-desc">Premium fashion for those who appreciate the art of dressing well. Shipped across India.</p>
+      </div>
+      <!-- Quick Links -->
+      <div class="footer-col" data-testid="footer-quicklinks-col">
+        <h4 class="footer-col-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="/" data-testid="footer-link-home">Home</a></li>
+          <li><a href="/shop" data-testid="footer-link-shop">Shop</a></li>
+          <li><a href="/wishlist" data-testid="footer-link-wishlist">Wishlist</a></li>
+          <li><a href="/cart" data-testid="footer-link-cart">Cart</a></li>
+          <li><a href="/login" data-testid="footer-link-login">Login / Register</a></li>
+        </ul>
+      </div>
+      <!-- Contact -->
+      <div class="footer-col" data-testid="footer-contact-col">
+        <h4 class="footer-col-title">Contact Us</h4>
+        <ul class="footer-links">
+          <li>📍 Mumbai, India</li>
+          <li>📧 hello@veloura.in</li>
+          <li>📞 +91 98765 43210</li>
+          <li>
+            <a href="https://wa.me/919876543210?text=Hi%20Veloura%2C%20I%27d%20like%20to%20enquire%20about%20your%20collections."
+               target="_blank" rel="noopener"
+               class="whatsapp-link" data-testid="button-whatsapp-contact">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+              Chat on WhatsApp
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- Social -->
+      <div class="footer-col" data-testid="footer-social-col">
+        <h4 class="footer-col-title">Follow Us</h4>
+        <div class="footer-social-row">
+          <a href="#" class="social-icon" aria-label="Instagram" data-testid="button-instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            Instagram
+          </a>
+          <a href="#" class="social-icon" aria-label="Pinterest" data-testid="button-pinterest">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.771 0 3.135-1.867 3.135-4.56 0-2.385-1.714-4.052-4.163-4.052-2.836 0-4.499 2.127-4.499 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.938.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+            </svg>
+            Pinterest
+          </a>
+          <a href="#" class="social-icon" aria-label="X (Twitter)" data-testid="button-twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            Twitter
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-testid="text-copyright">&copy; 2026 Veloura. All rights reserved. | Crafted with ♥ in India</p>
+      <p class="footer-developer" data-testid="text-developer-credit">
+        Developed by <a href="https://linktr.ee/4nusree" target="_blank" rel="noopener noreferrer" data-testid="link-developer">Anusree</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="alert" aria-live="polite" data-testid="toast"></div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

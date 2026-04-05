@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Veloura — Admin Dashboard" />
+  <title>Admin Dashboard — Veloura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin-body">
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="adm-sidebar" id="admSidebar" data-testid="admin-sidebar">
+  <div class="adm-sidebar-brand">
+    <a href="/" class="adm-brand-link">
+      <img src="/static/images/logo_transparent.png" alt="Veloura" class="adm-brand-logo" />
+    </a>
+    <span class="adm-brand-label">Admin</span>
+  </div>
+
+  <nav class="adm-nav" aria-label="Admin navigation">
+    <button class="adm-nav-item active" data-tab="dashboard" data-testid="nav-dashboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="adm-nav-item" data-tab="products" data-testid="nav-products">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Products
+    </button>
+    <button class="adm-nav-item" data-tab="orders" data-testid="nav-orders">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Orders
+    </button>
+    <button class="adm-nav-item" data-tab="users" data-testid="nav-users">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users
+    </button>
+    <button class="adm-nav-item" data-tab="inventory" data-testid="nav-inventory">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Inventory
+    </button>
+    <button class="adm-nav-item" data-tab="messages" data-testid="nav-messages">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Messages
+    </button>
+  </nav>
+
+  <div class="adm-sidebar-footer">
+    <a href="/" class="adm-back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to Store
+    </a>
+  </div>
+</aside>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<div class="adm-main" id="admMain">
+
+  <!-- Top bar -->
+  <header class="adm-topbar">
+    <button class="adm-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" data-testid="button-sidebar-toggle">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <h1 class="adm-topbar-title" id="tabTitle">Dashboard</h1>
+    <div class="adm-topbar-right">
+      <span class="adm-user-badge" id="adminUserBadge" data-testid="text-admin-user">—</span>
+    </div>
+  </header>
+
+  <!-- ===== TAB: DASHBOARD ===== -->
+  <section class="adm-tab active" id="tab-dashboard" data-testid="tab-dashboard">
+
+    <div class="adm-stats-grid" data-testid="stats-grid">
+      <div class="adm-stat-card" data-testid="stat-card-products">
+        <div class="adm-stat-icon stat-blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+        </div>
+        <div class="adm-stat-body">
+          <p class="adm-stat-label">Total Products</p>
+          <p class="adm-stat-value" id="ds-products" data-testid="stat-total-products">—</p>
+        </div>
+      </div>
+      <div class="adm-stat-card" data-testid="stat-card-orders">
+        <div class="adm-stat-icon stat-green">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="adm-stat-body">
+          <p class="adm-stat-label">Orders (30d)</p>
+          <p class="adm-stat-value" id="ds-orders30" data-testid="stat-orders-30d">—</p>
+        </div>
+      </div>
+      <div class="adm-stat-card" data-testid="stat-card-revenue">
+        <div class="adm-stat-icon stat-purple">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="adm-stat-body">
+          <p class="adm-stat-label">Revenue (30d)</p>
+          <p class="adm-stat-value" id="ds-revenue30" data-testid="stat-revenue-30d">—</p>
+        </div>
+      </div>
+      <div class="adm-stat-card" data-testid="stat-card-pending">
+        <div class="adm-stat-icon stat-orange">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="adm-stat-body">
+          <p class="adm-stat-label">Pending Orders</p>
+          <p class="adm-stat-value" id="ds-pending" data-testid="stat-pending-orders">—</p>
+        </div>
+      </div>
+      <div class="adm-stat-card" data-testid="stat-card-lowstock">
+        <div class="adm-stat-icon stat-red">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="adm-stat-body">
+          <p class="adm-stat-label">Low Stock Items</p>
+          <p class="adm-stat-value" id="ds-lowstock" data-testid="stat-low-stock">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="adm-charts-row">
+      <div class="adm-chart-card adm-chart-wide" data-testid="chart-sales">
+        <h3 class="adm-chart-title">Sales Trend — Last 30 Days</h3>
+        <canvas id="chartSales" height="100"></canvas>
+      </div>
+    </div>
+    <div class="adm-charts-row adm-charts-row-2">
+      <div class="adm-chart-card" data-testid="chart-status">
+        <h3 class="adm-chart-title">Orders by Status</h3>
+        <canvas id="chartStatus" height="200"></canvas>
+      </div>
+      <div class="adm-chart-card" data-testid="chart-top">
+        <h3 class="adm-chart-title">Top 5 Products</h3>
+        <canvas id="chartTop" height="200"></canvas>
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="adm-chart-card adm-activity-card" data-testid="activity-feed">
+      <div class="adm-activity-header">
+        <h3 class="adm-chart-title" style="margin:0">Recent Activity</h3>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshActivity" data-testid="button-refresh-activity">Refresh</button>
+      </div>
+      <div id="activityFeed" class="adm-activity-list" data-testid="activity-list">
+        <p class="adm-loading">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TAB: PRODUCTS ===== -->
+  <section class="adm-tab" id="tab-products" data-testid="tab-products">
+    <div class="adm-toolbar" data-testid="products-toolbar">
+      <div class="adm-toolbar-left">
+        <input type="text" class="adm-search" id="prodSearch" placeholder="Search products…" data-testid="input-product-search" />
+        <select class="adm-select" id="prodCatFilter" data-testid="select-product-category-filter">
+          <option value="">All Categories</option>
+          <option value="Kurthi">Kurthi</option>
+        </select>
+        <select class="adm-select" id="prodStockFilter" data-testid="select-product-stock-filter">
+          <option value="">All Stock</option>
+          <option value="low">Low Stock (≤10)</option>
+          <option value="out">Out of Stock</option>
+        </select>
+      </div>
+      <div class="adm-toolbar-right">
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="bulkActivateBtn" data-testid="button-bulk-activate" style="display:none">Activate</button>
+        <button class="adm-btn adm-btn-danger adm-btn-sm" id="bulkDeactivateBtn" data-testid="button-bulk-deactivate" style="display:none">Deactivate</button>
+        <label class="adm-btn adm-btn-ghost adm-btn-sm" data-testid="button-import-csv" style="cursor:pointer">
+          Import CSV
+          <input type="file" id="csvImportInput" accept=".csv" style="display:none" data-testid="input-csv-import" />
+        </label>
+        <a class="adm-btn adm-btn-ghost adm-btn-sm" id="exportProdBtn" data-testid="button-export-products">Export CSV</a>
+        <button class="adm-btn adm-btn-primary" id="openAddProductBtn" data-testid="button-open-add-product">+ Add Product</button>
+      </div>
+    </div>
+
+    <div class="adm-table-wrap" data-testid="products-table-wrap">
+      <table class="adm-table" data-testid="products-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAllProducts" data-testid="checkbox-select-all-products" /></th>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="prodTableBody" data-testid="products-table-body">
+          <tr><td colspan="9" class="adm-loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="adm-pagination" id="prodPagination" data-testid="products-pagination"></div>
+  </section>
+
+  <!-- ===== TAB: ORDERS ===== -->
+  <section class="adm-tab" id="tab-orders" data-testid="tab-orders">
+    <div class="adm-toolbar" data-testid="orders-toolbar">
+      <div class="adm-toolbar-left">
+        <select class="adm-select" id="orderStatusFilter" data-testid="select-order-status-filter">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Paid">Paid</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <input type="date" class="adm-select" id="orderDateFrom" data-testid="input-order-date-from" />
+        <input type="date" class="adm-select" id="orderDateTo" data-testid="input-order-date-to" />
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="orderFilterBtn" data-testid="button-order-filter">Apply</button>
+      </div>
+      <div class="adm-toolbar-right">
+        <a class="adm-btn adm-btn-ghost adm-btn-sm" id="exportOrdersBtn" data-testid="button-export-orders">Export CSV</a>
+      </div>
+    </div>
+
+    <div class="adm-table-wrap">
+      <table class="adm-table" data-testid="orders-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody" data-testid="orders-table-body">
+          <tr><td colspan="7" class="adm-loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="adm-pagination" id="ordersPagination" data-testid="orders-pagination"></div>
+  </section>
+
+  <!-- ===== TAB: USERS ===== -->
+  <section class="adm-tab" id="tab-users" data-testid="tab-users">
+    <div class="adm-toolbar" data-testid="users-toolbar">
+      <div class="adm-toolbar-left">
+        <input type="text" class="adm-search" id="userSearch" placeholder="Search by name or email…" data-testid="input-user-search" />
+        <select class="adm-select" id="userRoleFilter" data-testid="select-user-role-filter">
+          <option value="">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="userFilterBtn" data-testid="button-user-filter">Search</button>
+      </div>
+    </div>
+
+    <div class="adm-table-wrap">
+      <table class="adm-table" data-testid="users-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Orders</th>
+            <th>Spent</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody" data-testid="users-table-body">
+          <tr><td colspan="8" class="adm-loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="adm-pagination" id="usersPagination" data-testid="users-pagination"></div>
+  </section>
+
+  <!-- ===== TAB: INVENTORY ===== -->
+  <section class="adm-tab" id="tab-inventory" data-testid="tab-inventory">
+    <div class="adm-toolbar" data-testid="inventory-toolbar">
+      <div class="adm-toolbar-left">
+        <label class="adm-label-inline">Low-stock threshold:</label>
+        <input type="number" class="adm-select" id="invThreshold" value="10" min="0" style="width:80px" data-testid="input-inv-threshold" />
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="invApplyBtn" data-testid="button-inv-apply">Apply</button>
+      </div>
+    </div>
+
+    <div class="adm-table-wrap">
+      <table class="adm-table" data-testid="inventory-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Category</th>
+            <th>Current Stock</th>
+            <th>Adjust</th>
+          </tr>
+        </thead>
+        <tbody id="invTableBody" data-testid="inventory-table-body">
+          <tr><td colspan="6" class="adm-loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== TAB: MESSAGES ===== -->
+  <section class="adm-tab" id="tab-messages" data-testid="tab-messages">
+    <div class="adm-toolbar" data-testid="messages-toolbar">
+      <div class="adm-toolbar-left">
+        <span style="font-size:0.9rem;color:var(--adm-text-muted);">Messages sent from the Contact page</span>
+      </div>
+    </div>
+    <div class="adm-table-wrap">
+      <table class="adm-table" data-testid="messages-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="messagesTableBody" data-testid="messages-table-body">
+          <tr><td colspan="8" class="adm-loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div><!-- /.adm-main -->
+
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Add / Edit Product Modal -->
+<div class="adm-modal-backdrop" id="productModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" data-testid="modal-product">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2 class="adm-modal-title" id="productModalTitle">Add Product</h2>
+      <button class="adm-modal-close" data-close="productModal" aria-label="Close" data-testid="button-close-product-modal">✕</button>
+    </div>
+    <div class="adm-modal-body">
+      <div id="productModalMsg" class="adm-form-msg" style="display:none" data-testid="text-product-modal-msg"></div>
+      <form id="productModalForm" novalidate data-testid="form-product-modal">
+        <input type="hidden" id="pm-id" />
+        <div class="adm-form-row">
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-name">Product Name *</label>
+            <input class="adm-form-input" id="pm-name" type="text" placeholder="e.g. Silk Evening Gown" required data-testid="input-pm-name" />
+          </div>
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-code">Product Code</label>
+            <input class="adm-form-input" id="pm-code" type="text" placeholder="e.g. VEL-001" data-testid="input-pm-code" />
+          </div>
+        </div>
+        <div class="adm-form-row">
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-price">Price (₹) *</label>
+            <input class="adm-form-input" id="pm-price" type="number" min="1" placeholder="2499" required data-testid="input-pm-price" />
+          </div>
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-category">Category</label>
+            <select class="adm-form-input" id="pm-category" data-testid="select-pm-category">
+              <option value="Kurthi">Kurthi</option>
+            </select>
+          </div>
+        </div>
+        <div class="adm-form-group">
+          <label class="adm-form-label" for="pm-image">Main Image URL *</label>
+          <input class="adm-form-input" id="pm-image" type="url" placeholder="https://…" required data-testid="input-pm-image" />
+        </div>
+        <div class="adm-form-row">
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-sizes">Sizes</label>
+            <input class="adm-form-input" id="pm-sizes" type="text" placeholder="S,M,L,XL" data-testid="input-pm-sizes" />
+          </div>
+          <div class="adm-form-group">
+            <label class="adm-form-label" for="pm-stock">Stock Count</label>
+            <input class="adm-form-input" id="pm-stock" type="number" min="-1" placeholder="-1 (unlimited)" data-testid="input-pm-stock" />
+          </div>
+        </div>
+        <div class="adm-form-group">
+          <label class="adm-form-label">Color Variants <span class="adm-hint">Comma-separated color names, then add up to 8 images each</span></label>
+          <input class="adm-form-input" id="pm-colors" type="text" placeholder="e.g. Black,White,Pink" data-testid="input-pm-colors" />
+          <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="pm-parse-colors" style="margin-top:6px" data-testid="button-pm-parse-colors">Set up color images ↓</button>
+          <div id="pm-color-variants" class="adm-color-variants" data-testid="pm-color-variants"></div>
+        </div>
+        <div class="adm-form-group">
+          <label class="adm-form-label" for="pm-description">Description</label>
+          <textarea class="adm-form-input" id="pm-description" rows="3" placeholder="Product description…" data-testid="input-pm-description"></textarea>
+        </div>
+        <div class="adm-modal-actions">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close="productModal" data-testid="button-pm-cancel">Cancel</button>
+          <button type="submit" class="adm-btn adm-btn-primary" id="pm-submit" data-testid="button-pm-submit">Add Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="adm-modal-backdrop" id="deleteModal" style="display:none" role="dialog" aria-modal="true" data-testid="modal-delete">
+  <div class="adm-modal adm-modal-sm">
+    <div class="adm-modal-header">
+      <h2 class="adm-modal-title">Confirm Delete</h2>
+      <button class="adm-modal-close" data-close="deleteModal" aria-label="Close" data-testid="button-close-delete-modal">✕</button>
+    </div>
+    <div class="adm-modal-body">
+      <p id="deleteModalMsg" data-testid="text-delete-modal-msg">Are you sure you want to delete this product? This action cannot be undone.</p>
+      <div class="adm-modal-actions">
+        <button class="adm-btn adm-btn-ghost" data-close="deleteModal" data-testid="button-delete-cancel">Cancel</button>
+        <button class="adm-btn adm-btn-danger" id="confirmDeleteBtn" data-testid="button-delete-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="adm-modal-backdrop" id="orderModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle" data-testid="modal-order">
+  <div class="adm-modal adm-modal-lg">
+    <div class="adm-modal-header">
+      <h2 class="adm-modal-title" id="orderModalTitle">Order Detail</h2>
+      <button class="adm-modal-close" data-close="orderModal" aria-label="Close" data-testid="button-close-order-modal">✕</button>
+    </div>
+    <div class="adm-modal-body" id="orderModalBody" data-testid="order-modal-body">
+      <p class="adm-loading">Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- User Profile Modal -->
+<div class="adm-modal-backdrop" id="userModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="userModalTitle" data-testid="modal-user">
+  <div class="adm-modal adm-modal-sm">
+    <div class="adm-modal-header">
+      <h2 class="adm-modal-title" id="userModalTitle">User Profile</h2>
+      <button class="adm-modal-close" data-close="userModal" aria-label="Close" data-testid="button-close-user-modal">✕</button>
+    </div>
+    <div class="adm-modal-body" id="userModalBody" data-testid="user-modal-body">
+      <p class="adm-loading">Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- Role Confirm Modal -->
+<div class="adm-modal-backdrop" id="roleModal" style="display:none" role="dialog" aria-modal="true" data-testid="modal-role">
+  <div class="adm-modal adm-modal-sm">
+    <div class="adm-modal-header">
+      <h2 class="adm-modal-title">Confirm Role Change</h2>
+      <button class="adm-modal-close" data-close="roleModal" aria-label="Close" data-testid="button-close-role-modal">✕</button>
+    </div>
+    <div class="adm-modal-body">
+      <p id="roleModalMsg" data-testid="text-role-modal-msg"></p>
+      <div class="adm-modal-actions">
+        <button class="adm-btn adm-btn-ghost" data-close="roleModal" data-testid="button-role-cancel">Cancel</button>
+        <button class="adm-btn adm-btn-primary" id="confirmRoleBtn" data-testid="button-role-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="admToast" class="adm-toast" role="alert" aria-live="polite" data-testid="adm-toast"></div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

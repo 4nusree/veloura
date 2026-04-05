@@ -1,0 +1,131 @@
+/* ============================================
+   VELOURA THEME OVERRIDES
+   Blush Pink & Ivory — Global Brand Palette
+   Loaded on every page to replace the default
+   gold/amber accent with the Veloura identity.
+   ============================================ */
+
+/* ── Core variable overrides ─────────────── */
+:root {
+  --accent:  #C97D90;
+  --accent2: #E8AEB7;
+  --bg:      #F8F4F1;
+  --pink:    #E8AEB7;
+}
+
+/* ── Body font ───────────────────────────── */
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+/* ── Header border ───────────────────────── */
+.header {
+  border-bottom-color: rgba(201, 125, 144, 0.12);
+}
+
+/* ── Cart / wishlist badge ───────────────── */
+.cart-count,
+.wishlist-count {
+  background: #C97D90 !important;
+}
+
+/* ── Active filter / tab pills ───────────── */
+.filter-btn.active,
+.color-filter.active {
+  background: #C97D90 !important;
+  border-color: #C97D90 !important;
+  box-shadow: 0 2px 12px rgba(201,125,144,0.28) !important;
+}
+
+/* ── Buttons – retheme shadow ────────────── */
+.auth-submit-btn {
+  box-shadow: 0 4px 18px rgba(201, 125, 144, 0.3);
+}
+.auth-submit-btn:hover:not(:disabled) {
+  background: #b5687a;
+  box-shadow: 0 6px 22px rgba(201, 125, 144, 0.4);
+}
+
+/* ── Wishlist heart filled ───────────────── */
+.btn-wishlist.active svg,
+.btn-wishlist.wishlisted svg {
+  fill: #C97D90 !important;
+  stroke: #C97D90 !important;
+}
+
+/* ── Input focus ring ────────────────────── */
+.auth-input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #C97D90 !important;
+  box-shadow: 0 0 0 3px rgba(201, 125, 144, 0.14) !important;
+  outline: none;
+}
+
+/* ── Auth pages – left panel ─────────────── */
+.auth-left {
+  background:
+    linear-gradient(135deg, rgba(46, 20, 30, 0.55) 0%, rgba(232, 174, 183, 0.12) 100%),
+    url('https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=1200&auto=format&fit=crop&q=80')
+    center / cover no-repeat;
+}
+
+.auth-left-overlay {
+  background: linear-gradient(180deg, rgba(30, 10, 18, 0.08) 0%, rgba(30, 10, 18, 0.68) 100%);
+}
+
+/* ── Auth eyebrow and brand mark ─────────── */
+.auth-brand-mark {
+  color: #E8AEB7;
+}
+
+.auth-left-title em {
+  color: #E8AEB7;
+}
+
+/* ── Auth forgot / switch link ───────────── */
+.auth-forgot-link,
+.auth-switch-text a {
+  color: #C97D90;
+}
+.auth-forgot-link:hover,
+.auth-switch-text a:hover {
+  color: #b5687a;
+}
+
+/* ── Checkout & form accent ──────────────── */
+.checkout-step.active .step-number,
+.checkout-step.completed .step-number {
+  background: #C97D90 !important;
+  border-color: #C97D90 !important;
+}
+.checkout-step.active .step-label,
+.checkout-step.completed .step-label {
+  color: #C97D90 !important;
+}
+
+/* ── Product page – add to cart, buy now ─── */
+.pd-btn-primary,
+.pd-btn-cart,
+.btn-add-cart,
+.btn-buy-now {
+  background: #C97D90 !important;
+  border-color: #C97D90 !important;
+  box-shadow: 0 4px 16px rgba(201,125,144,0.28) !important;
+}
+.pd-btn-primary:hover,
+.pd-btn-cart:hover,
+.btn-add-cart:hover,
+.btn-buy-now:hover {
+  background: #b5687a !important;
+  border-color: #b5687a !important;
+}
+
+/* ── Admin page accent ───────────────────── */
+.adm-badge-danger { background: #C97D90 !important; }
+.adm-btn-primary  { background: #C97D90 !important; border-color: #C97D90 !important; }
+.adm-btn-primary:hover { background: #b5687a !important; }

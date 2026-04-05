@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Veloura — Your shopping cart." />
+  <title>Your Cart — Veloura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/redesign.css') }}" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="vl-header" role="banner">
+    <div class="vl-header-container">
+      <div class="vl-nav-pill">
+        <button class="vl-logo-link vl-logo-btn" id="vlLogoBtn" aria-label="Open menu" data-testid="button-logo-sidebar">
+          <div class="vl-logo-circle">
+            <img src="/static/images/veloura_logo.jpeg" alt="Veloura" class="vl-logo-img" />
+          </div>
+        </button>
+        <a href="/" class="vl-brand-name" data-testid="link-brand-home">VELOURA</a>
+        <div class="vl-nav-icons">
+          <div class="vl-search-wrap" id="vlSearchWrap">
+            <button class="vl-icon-circle" id="vlSearchBtn" aria-label="Search" data-testid="button-search-toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <div class="vl-search-drop" id="vlSearchDrop">
+              <input type="text" class="vl-search-input" id="vlSearchInput" placeholder="Search products…" aria-label="Search products" data-testid="input-search" />
+              <button class="vl-search-go" id="vlSearchGo" aria-label="Submit search" data-testid="button-search-submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+            </div>
+          </div>
+          <a href="/cart" class="vl-icon-circle vl-cart-icon" aria-label="View cart" data-testid="button-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span class="vl-badge cart-count" id="cartCount" data-testid="text-cart-count">0</span>
+          </a>
+          <div id="auth-action" class="vl-auth-action">
+            <a href="/login" class="vl-icon-circle" aria-label="Login" data-testid="button-login-default">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+          <button class="vl-hamburger" id="vlHamburger" aria-label="Toggle menu" aria-expanded="false" data-testid="button-hamburger">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="vl-mobile-menu" id="vlMobileMenu" aria-hidden="true">
+      <a href="/" class="vl-mobile-link" data-testid="link-mobile-home">Home</a>
+      <a href="/shop" class="vl-mobile-link" data-testid="link-mobile-shop">Shop</a>
+      <a href="/cart" class="vl-mobile-link" data-testid="link-mobile-cart">Cart</a>
+      <a href="/login" class="vl-mobile-link" data-testid="link-mobile-login">Login / Register</a>
+    </div>
+  </header>
+
+  <div class="vl-sidebar-overlay" id="vlSidebarOverlay" data-testid="sidebar-overlay"></div>
+  <nav class="vl-sidebar" id="vlSidebar" aria-label="Main navigation" data-testid="sidebar-nav">
+    <div class="vl-sidebar-header">
+      <div class="vl-sidebar-logo"><img src="/static/images/veloura_logo.jpeg" alt="Veloura" /></div>
+      <span class="vl-sidebar-brand">VELOURA</span>
+      <button class="vl-sidebar-close" id="vlSidebarClose" aria-label="Close menu" data-testid="button-sidebar-close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="vl-sidebar-links">
+      <li><a href="/" class="vl-sidebar-link" data-testid="sidebar-link-home"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
+      <li><a href="/information" class="vl-sidebar-link" data-testid="sidebar-link-information"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Information Desk</a></li>
+      <li><a href="/contact" class="vl-sidebar-link" data-testid="sidebar-link-contact"><span class="vl-sidebar-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- CART PAGE -->
+  <main class="cart-page" data-testid="cart-page">
+
+    <div class="cart-page-header">
+      <p class="section-eyebrow">Shopping</p>
+      <h1 class="cart-page-title"
+          style="font-family: 'Playfair Display', Georgia, serif;"
+          data-testid="text-cart-title">
+        Your Cart
+      </h1>
+    </div>
+
+    <!-- Cart Items -->
+    <div class="cart-container" data-testid="cart-container">
+
+      <!-- Items list -->
+      <div id="cart-items" data-testid="cart-items-list"></div>
+
+      <!-- Empty state -->
+      <div id="cart-empty" class="cart-empty" style="display:none;" data-testid="cart-empty">
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.2"
+             stroke-linecap="round" stroke-linejoin="round"
+             style="color: var(--pink); margin-bottom: 20px;">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <p class="cart-empty-title">Your cart is empty</p>
+        <p class="cart-empty-sub">Add some items to get started.</p>
+        <a href="/" class="btn btn-primary" style="margin-top: 28px;" data-testid="button-continue-shopping">
+          Continue Shopping
+        </a>
+      </div>
+
+      <!-- Summary -->
+      <div id="cart-summary" class="cart-summary" data-testid="cart-summary">
+
+        <!-- Coupon Section -->
+        <div class="coupon-section" data-testid="coupon-section">
+          <p class="coupon-title">Have a coupon?</p>
+          <div class="coupon-row">
+            <input
+              type="text"
+              id="coupon-input"
+              class="coupon-input"
+              placeholder="Enter coupon code"
+              autocomplete="off"
+              data-testid="input-coupon"
+            />
+            <button id="coupon-apply-btn" class="coupon-apply-btn" data-testid="button-apply-coupon">
+              Apply
+            </button>
+          </div>
+          <div id="coupon-feedback" class="coupon-feedback" style="display:none;" data-testid="text-coupon-feedback"></div>
+          <p class="coupon-hint">Try: VELOURA10 · WELCOME20 · FLAT100</p>
+        </div>
+
+        <!-- Price breakdown -->
+        <div class="cart-price-breakdown">
+          <div class="cart-summary-row">
+            <span>Subtotal</span>
+            <span id="cart-total" data-testid="text-cart-total">₹0</span>
+          </div>
+
+          <!-- Discount row (hidden until coupon applied) -->
+          <div class="cart-summary-row coupon-discount-row" id="discount-row" style="display:none;" data-testid="discount-row">
+            <span id="discount-label">Discount</span>
+            <span id="discount-amount" class="discount-amount" data-testid="text-discount-amount">-₹0</span>
+          </div>
+
+          <!-- Final total (hidden until coupon applied) -->
+          <div class="cart-summary-row cart-final-total-row" id="final-total-row" style="display:none;" data-testid="final-total-row">
+            <span class="cart-final-total-label">Total</span>
+            <span id="final-total" class="cart-final-total-amount" data-testid="text-final-total">₹0</span>
+          </div>
+        </div>
+
+        <div class="cart-summary-row cart-summary-row--note">
+          <span>Shipping &amp; taxes calculated at checkout</span>
+        </div>
+        <a href="/checkout" class="cart-checkout-btn" id="checkout-btn" data-testid="button-checkout">
+          Checkout
+        </a>
+        <a href="/" class="cart-continue-link" data-testid="link-continue-shopping">
+          ← Continue Shopping
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+  (function () {
+    var COUPONS = {
+      'VELOURA10': { type: 'percent', value: 10,  label: '10% off' },
+      'WELCOME20': { type: 'percent', value: 20,  label: '20% off' },
+      'FLAT100':   { type: 'flat',    value: 100, label: '₹100 off' }
+    };
+
+    var appliedCoupon = null;
+
+    var subtotalEl     = document.getElementById('cart-total');
+    var discountRow    = document.getElementById('discount-row');
+    var discountLbl    = document.getElementById('discount-label');
+    var discountAmt    = document.getElementById('discount-amount');
+    var finalTotalRow  = document.getElementById('final-total-row');
+    var finalTotalEl   = document.getElementById('final-total');
+    var couponInput    = document.getElementById('coupon-input');
+    var applyBtn       = document.getElementById('coupon-apply-btn');
+    var feedbackEl     = document.getElementById('coupon-feedback');
+
+    function parseAmount(str) {
+      return parseFloat((str || '').replace(/[^0-9.]/g, '')) || 0;
+    }
+
+    function fmt(n) {
+      return '₹' + Math.round(n).toLocaleString('en-IN');
+    }
+
+    function recalculate() {
+      if (!subtotalEl || !appliedCoupon) {
+        discountRow.style.display   = 'none';
+        finalTotalRow.style.display = 'none';
+        sessionStorage.removeItem('veloura_coupon');
+        return;
+      }
+
+      var subtotal = parseAmount(subtotalEl.textContent);
+      var coupon   = COUPONS[appliedCoupon];
+      var disc     = coupon.type === 'percent'
+        ? Math.round(subtotal * coupon.value / 100)
+        : Math.min(coupon.value, subtotal);
+      var total    = Math.max(0, subtotal - disc);
+
+      discountLbl.textContent     = 'Discount (' + appliedCoupon + ')';
+      discountAmt.textContent     = '-' + fmt(disc);
+      discountRow.style.display   = 'flex';
+
+      finalTotalEl.textContent    = fmt(total);
+      finalTotalRow.style.display = 'flex';
+
+      /* Persist coupon so checkout page can apply the same discount */
+      sessionStorage.setItem('veloura_coupon', JSON.stringify({
+        code:  appliedCoupon,
+        type:  coupon.type,
+        value: coupon.value,
+        label: coupon.label
+      }));
+    }
+
+    /* Re-run whenever the subtotal changes (e.g. item removed from cart) */
+    if (subtotalEl) {
+      new MutationObserver(recalculate)
+        .observe(subtotalEl, { childList: true, characterData: true, subtree: true });
+    }
+
+    function showFeedback(msg, success) {
+      feedbackEl.textContent   = msg;
+      feedbackEl.style.display = 'block';
+      feedbackEl.className     = 'coupon-feedback ' + (success ? 'coupon-success' : 'coupon-error');
+    }
+
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function () {
+        var code = (couponInput.value || '').trim().toUpperCase();
+        if (!code) {
+          showFeedback('Please enter a coupon code.', false);
+          return;
+        }
+        if (COUPONS[code]) {
+          appliedCoupon        = code;
+          applyBtn.textContent = 'Applied ✓';
+          applyBtn.disabled    = true;
+          couponInput.disabled = true;
+          showFeedback('Coupon "' + code + '" applied — ' + COUPONS[code].label + '!', true);
+          recalculate();
+        } else {
+          appliedCoupon = null;
+          discountRow.style.display   = 'none';
+          finalTotalRow.style.display = 'none';
+          sessionStorage.removeItem('veloura_coupon');
+          showFeedback('Invalid coupon code. Please try again.', false);
+        }
+      });
+
+      couponInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') applyBtn.click();
+      });
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Veloura Information Desk — Policies, FAQs, and everything you need to know."
+    />
+    <title>Information Desk — Veloura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/redesign.css') }}"
+    />
+  </head>
+  <body class="veloura-redesign">
+    <!-- NAVBAR -->
+    <header class="vl-header" role="banner">
+      <div class="vl-header-container">
+        <div class="vl-nav-pill">
+          <button
+            class="vl-logo-link vl-logo-btn"
+            id="vlLogoBtn"
+            aria-label="Open menu"
+            data-testid="button-logo-sidebar"
+          >
+            <div class="vl-logo-circle">
+              <img
+                src="/static/images/veloura_logo.jpeg"
+                alt="Veloura"
+                class="vl-logo-img"
+              />
+            </div>
+          </button>
+          <a href="/" class="vl-brand-name" data-testid="link-brand-home"
+            >VELOURA</a
+          >
+          <div class="vl-nav-icons">
+            <a
+              href="/cart"
+              class="vl-icon-circle vl-cart-icon"
+              aria-label="View cart"
+              data-testid="button-cart"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                />
+              </svg>
+            </a>
+            <a
+              href="/login"
+              class="vl-icon-circle"
+              aria-label="Login"
+              data-testid="button-login"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div
+      class="vl-sidebar-overlay"
+      id="vlSidebarOverlay"
+      data-testid="sidebar-overlay"
+    ></div>
+    <nav
+      class="vl-sidebar"
+      id="vlSidebar"
+      aria-label="Main navigation"
+      data-testid="sidebar-nav"
+    >
+      <div class="vl-sidebar-header">
+        <div class="vl-sidebar-logo">
+          <img src="/static/images/veloura_logo.jpeg" alt="Veloura" />
+        </div>
+        <span class="vl-sidebar-brand">VELOURA</span>
+        <button
+          class="vl-sidebar-close"
+          id="vlSidebarClose"
+          aria-label="Close menu"
+          data-testid="button-sidebar-close"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="vl-sidebar-links">
+        <li>
+          <a href="/" class="vl-sidebar-link" data-testid="sidebar-link-home">
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/information"
+            class="vl-sidebar-link vl-sidebar-link--active"
+            data-testid="sidebar-link-information"
+          >
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </span>
+            Information Desk
+          </a>
+        </li>
+        <li>
+          <a
+            href="/contact"
+            class="vl-sidebar-link"
+            data-testid="sidebar-link-contact"
+          >
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+            </span>
+            Contact
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="vl-page-main" data-testid="information-page">
+      <div class="vl-page-hero">
+        <h1 class="vl-page-title" data-testid="information-title">
+          Information Desk
+        </h1>
+        <p class="vl-page-subtitle" data-testid="information-subtitle">
+          Policies, FAQs, and everything you need to know about Veloura.
+        </p>
+      </div>
+
+      <div class="vl-info-layout">
+        <!-- Left sticky nav -->
+        <aside class="vl-info-nav" data-testid="info-nav">
+          <ul class="vl-info-nav-list">
+            <li>
+              <a
+                href="#about-us"
+                class="vl-info-nav-link"
+                data-testid="info-nav-about"
+                >About Us</a
+              >
+            </li>
+            <li>
+              <a
+                href="#shipping-policy"
+                class="vl-info-nav-link"
+                data-testid="info-nav-shipping"
+                >Shipping Policy</a
+              >
+            </li>
+            <li>
+              <a
+                href="#exchange-policy"
+                class="vl-info-nav-link"
+                data-testid="info-nav-exchange"
+                >Exchange Policy</a
+              >
+            </li>
+            <li>
+              <a href="#return-refund-policy" class="vl-info-nav-link" data-testid="info-nav-return">Return &amp; Refund Policy</a>
+            </li>
+            <li>
+              <a
+                href="#privacy-policy"
+                class="vl-info-nav-link"
+                data-testid="info-nav-privacy"
+                >Privacy Policy</a
+              >
+            </li>
+            <li>
+              <a
+                href="#terms"
+                class="vl-info-nav-link"
+                data-testid="info-nav-terms"
+                >Terms &amp; Conditions</a
+              >
+            </li>
+            <li>
+              <a href="#faq" class="vl-info-nav-link" data-testid="info-nav-faq"
+                >FAQ</a
+              >
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Right content -->
+        <div class="vl-info-body">
+          <!-- ── About Us ─────────────────────────── -->
+          <section
+            class="vl-info-section"
+            id="about-us"
+            data-testid="section-about-us"
+          >
+            <div class="vl-info-section-badge">Our Story</div>
+            <h2 class="vl-info-section-title">About Us</h2>
+
+            <!-- Hero image -->
+            <div class="vl-info-about-img" data-testid="about-us-image">
+              <img
+                src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=1200&q=90&fit=crop&crop=top"
+                alt="Veloura — elegant Indian ethnic fashion"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="vl-info-text">
+              <p>
+                Veloura is a vision brought to life by <strong>Ameena</strong>,
+                built on elegance, confidence, and timeless femininity. Founded
+                in Kochi, Kerala with a passion for style and self-expression,
+                we set out to create a destination where modern women could find
+                ethnic wear that truly speaks to them — pieces that are as
+                comfortable as they are breathtaking.
+              </p>
+              <p>
+                Every kurta, anarkali, and churidhar in our collection is
+                sourced directly from skilled artisans across India. We work
+                with weavers in Jaipur, embroiderers in Lucknow, and fabric
+                specialists in Surat to bring you garments of exceptional
+                quality and authenticity.
+              </p>
+              <p>
+                At Veloura, we believe fashion is a celebration — of culture,
+                confidence, and individuality. Whether you're dressing for a
+                festive occasion, a casual outing, or the everyday, we have the
+                perfect piece to make you feel uniquely you.
+              </p>
+
+              <!-- Mission / Vision pills -->
+              <div class="vl-about-pillars" data-testid="about-pillars">
+                <div class="vl-about-pillar" data-testid="pillar-mission">
+                  <span class="vl-about-pillar-icon">✨</span>
+                  <div>
+                    <strong>Our Mission</strong>
+                    <p>To empower women through clothing that enhances confidence, individuality, and grace.</p>
+                  </div>
+                </div>
+                <div class="vl-about-pillar" data-testid="pillar-vision">
+                  <span class="vl-about-pillar-icon">💖</span>
+                  <div>
+                    <strong>Our Vision</strong>
+                    <p>To become a globally recognized brand known for elegance, quality, and innovation.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Values & Offerings -->
+              <div class="vl-about-two-col" data-testid="about-values-offerings">
+                <div data-testid="about-values">
+                  <p class="vl-about-mini-title">Our Values</p>
+                  <ul class="vl-about-list">
+                    <li>Quality First</li>
+                    <li>Customer Satisfaction</li>
+                    <li>Ethical Practices</li>
+                    <li>Sustainability</li>
+                  </ul>
+                </div>
+                <div data-testid="about-offerings">
+                  <p class="vl-about-mini-title">What We Offer</p>
+                  <ul class="vl-about-list">
+                    <li>Contemporary women's wear</li>
+                    <li>Elegant everyday styles</li>
+                    <li>Statement fashion pieces</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="vl-info-highlight-row">
+                <div class="vl-info-highlight" data-testid="highlight-artisans">
+                  <span class="vl-info-highlight-num">500+</span>
+                  <span class="vl-info-highlight-label">Artisan Partners</span>
+                </div>
+                <div class="vl-info-highlight" data-testid="highlight-collections">
+                  <span class="vl-info-highlight-num">1200+</span>
+                  <span class="vl-info-highlight-label">Curated Styles</span>
+                </div>
+                <div class="vl-info-highlight" data-testid="highlight-states">
+                  <span class="vl-info-highlight-num">28</span>
+                  <span class="vl-info-highlight-label">States We Ship To</span>
+                </div>
+              </div>
+
+              <!-- Promise -->
+              <p class="vl-about-promise" data-testid="about-promise">
+                <em>Veloura isn't just what you wear — it's how you feel.</em>
+              </p>
+            </div>
+          </section>
+
+          <!-- ── Shipping Policy ────────────────── -->
+          <section
+            class="vl-info-section"
+            id="shipping-policy"
+            data-testid="section-shipping"
+          >
+            <div class="vl-info-section-badge">Delivery</div>
+            <h2 class="vl-info-section-title">Shipping Policy</h2>
+            <div class="vl-info-text">
+              <h3>Processing Time</h3>
+              <p>
+                All orders are processed within 1–2 business days of placement.
+                Orders placed on Sundays or public holidays are processed the
+                next working day.
+              </p>
+              <h3>Delivery Timelines</h3>
+              <ul>
+                <li>
+                  <strong>Standard Delivery:</strong> 4–7 business days
+                  (pan-India)
+                </li>
+                <li>
+                  <strong>Express Delivery:</strong> 1–3 business days (select
+                  pin codes)
+                </li>
+                <li><strong>Remote Areas:</strong> 7–12 business days</li>
+              </ul>
+              <h3>Shipping Charges</h3>
+              <p>
+                Shipping is <strong>free on all orders above ₹999</strong>. A
+                flat charge of ₹60 applies to orders below ₹999.
+              </p>
+              <h3>Tracking Your Order</h3>
+              <p>
+                Once your order is dispatched, you will receive an email and SMS
+                with your tracking number. You can track your shipment directly
+                through our courier partner's website.
+              </p>
+              <h3>Failed Delivery Attempts</h3>
+              <p>
+                If delivery is unsuccessful after two attempts, the package will
+                be held at the nearest courier facility for 5 days before being
+                returned to us. Please ensure someone is available to receive
+                the package.
+              </p>
+            </div>
+          </section>
+
+          <!-- ── Exchange Policy ────────────────── -->
+          <section
+            class="vl-info-section"
+            id="exchange-policy"
+            data-testid="section-exchange"
+          >
+            <div class="vl-info-section-badge">Returns</div>
+            <h2 class="vl-info-section-title">Exchange Policy</h2>
+            <div class="vl-info-text">
+              <h3>Exchange Window</h3>
+              <p>
+                We accept exchange requests within
+                <strong>7 days of delivery</strong>. Items must be unused,
+                unwashed, and returned in their original packaging with all tags
+                attached.
+              </p>
+              <h3>Eligible Items for Exchange</h3>
+              <ul>
+                <li>Items with size issues</li>
+                <li>Items received in a defective or damaged condition</li>
+                <li>
+                  Items that significantly differ from the product description
+                </li>
+              </ul>
+              <h3>Non-Exchangeable Items</h3>
+              <ul>
+                <li>Items that have been worn, washed, or altered</li>
+                <li>Items without original tags or packaging</li>
+                <li>Sale or discounted items (unless defective)</li>
+                <li>Custom-stitched or made-to-measure garments</li>
+              </ul>
+              <h3>How to Initiate an Exchange</h3>
+              <p>
+                Email <strong>hello@veloura.in</strong> with your order number,
+                the item you wish to exchange, and the reason. Our team will
+                respond within 24 hours with further instructions. Return
+                shipping is covered by Veloura for defective or incorrect items.
+              </p>
+              <h3>Refunds</h3>
+              <p>
+                We currently offer exchange or store credit only. Direct refunds
+                are issued exclusively for items lost in transit or undelivered.
+              </p>
+            </div>
+          </section>
+
+          <!-- ── Return & Refund Policy ────────── -->
+          <section class="vl-info-section" id="return-refund-policy" data-testid="section-return-refund">
+            <div class="vl-info-section-badge">Returns</div>
+            <h2 class="vl-info-section-title">Return &amp; Refund Policy</h2>
+            <div class="vl-info-text">
+
+              <h3>Return Window</h3>
+              <p>We accept return requests within <strong>10 days of delivery</strong>. Items must be unused, unworn, and returned in their original packaging with all tags intact.</p>
+
+              <h3>Eligible Items for Return</h3>
+              <ul>
+                <li>Items received in a defective or damaged condition</li>
+                <li>Items that significantly differ from the product description or image</li>
+                <li>Wrong item delivered</li>
+              </ul>
+
+              <h3>Non-Returnable Items</h3>
+              <ul>
+                <li>Items that have been worn, washed, or altered</li>
+                <li>Items without original tags or packaging</li>
+                <li>Sale or discounted items (unless defective)</li>
+                <li>Custom-stitched or made-to-measure garments</li>
+                <li>Innerwear, accessories, or items marked as non-returnable</li>
+              </ul>
+
+              <h3>How to Initiate a Return</h3>
+              <p>Email <strong>ameenasaleem002@gmail.com</strong> or call <strong>8943812820</strong> within 10 days of delivery with:</p>
+              <ul>
+                <li>Your order number</li>
+                <li>The item(s) you wish to return</li>
+                <li>Reason for return and photos (if damaged or incorrect)</li>
+              </ul>
+              <p>Our team will respond within 24 hours with return instructions and a pickup arrangement where available.</p>
+
+              <h3>Refund Process</h3>
+              <ul>
+                <li>Refunds are processed after the returned item is received and inspected</li>
+                <li>Approved refunds are issued as <strong>store credit</strong> or to the original payment method within <strong>5–7 business days</strong></li>
+                <li>Shipping charges are non-refundable unless the return is due to our error</li>
+              </ul>
+
+              <h3>Damaged or Incorrect Orders</h3>
+              <p>If your order arrives damaged or is incorrect, please contact us within <strong>48 hours of delivery</strong> with photographs. We will arrange a replacement or full refund at no extra cost.</p>
+
+              <h3>Refund for Lost Shipments</h3>
+              <p>If your order is confirmed lost in transit by the courier, we will issue a full refund or resend the order based on your preference.</p>
+
+            </div>
+          </section>
+
+          <!-- ── Privacy Policy ─────────────────── -->
+          <section class="vl-info-section" id="privacy-policy" data-testid="section-privacy">
+            <div class="vl-info-section-badge">Legal</div>
+            <h2 class="vl-info-section-title">Privacy Policy</h2>
+            <div class="vl-info-text">
+              <p><em>Effective Date: [Insert Date]</em><br>Business Name: Veloura &nbsp;|&nbsp; Owner: Ameena</p>
+
+              <h3>1. Legal Framework</h3>
+              <p>This Privacy Policy is governed by:</p>
+              <ul>
+                <li>Information Technology Act, 2000 (India)</li>
+                <li>IT (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</li>
+                <li>Applicable data protection and consumer laws</li>
+              </ul>
+
+              <h3>2. Information We Collect</h3>
+              <p><strong>a) Personal Information</strong></p>
+              <ul>
+                <li>Name, email, phone number</li>
+                <li>Billing &amp; shipping address</li>
+              </ul>
+              <p><strong>b) Sensitive Information</strong></p>
+              <ul>
+                <li>Payment details (processed securely; not stored by us)</li>
+              </ul>
+              <p><strong>c) Technical Data</strong></p>
+              <ul>
+                <li>IP address</li>
+                <li>Device type</li>
+                <li>Browser type</li>
+                <li>Cookies and usage data</li>
+              </ul>
+
+              <h3>3. Purpose of Collection</h3>
+              <p>We collect data for:</p>
+              <ul>
+                <li>Order processing and delivery</li>
+                <li>Customer support</li>
+                <li>Marketing communications (with consent)</li>
+                <li>Fraud prevention</li>
+              </ul>
+
+              <h3>4. Lawful Basis of Processing</h3>
+              <p>We process your data based on:</p>
+              <ul>
+                <li>Your consent</li>
+                <li>Contractual necessity (order fulfillment)</li>
+                <li>Legal obligations</li>
+              </ul>
+
+              <h3>5. Data Sharing &amp; Disclosure</h3>
+              <p>We may share data with:</p>
+              <ul>
+                <li>Logistics partners</li>
+                <li>Payment gateways</li>
+                <li>IT service providers</li>
+                <li>Government authorities (if legally required)</li>
+              </ul>
+
+              <h3>6. Data Retention</h3>
+              <p>Your data is retained only as long as necessary for business and legal purposes.</p>
+
+              <h3>7. Data Security</h3>
+              <p>We follow reasonable security practices including:</p>
+              <ul>
+                <li>Encryption</li>
+                <li>Secure servers</li>
+                <li>Restricted access</li>
+              </ul>
+
+              <h3>8. User Rights</h3>
+              <p>You have the right to:</p>
+              <ul>
+                <li>Access your data</li>
+                <li>Correct inaccuracies</li>
+                <li>Withdraw consent</li>
+                <li>Request deletion</li>
+              </ul>
+
+              <h3>9. Cookies Policy</h3>
+              <p>We use cookies to:</p>
+              <ul>
+                <li>Improve website functionality</li>
+                <li>Analyze traffic</li>
+                <li>Personalize user experience</li>
+              </ul>
+
+              <h3>10. Third-Party Links</h3>
+              <p>We are not responsible for external websites linked on our platform.</p>
+
+              <h3>11. Children's Privacy</h3>
+              <p>We do not knowingly collect data from individuals under 18.</p>
+
+              <h3>12. Grievance Officer</h3>
+              <p>As per IT Rules:<br>
+              Name: Ameena<br>
+              📧 Email: <a href="mailto:ameenasaleem002@gmail.com" style="color:var(--vl-blush-dark);">ameenasaleem002@gmail.com</a></p>
+            </div>
+          </section>
+
+          <!-- ── Terms & Conditions ─────────────── -->
+          <section
+            class="vl-info-section"
+            id="terms"
+            data-testid="section-terms"
+          >
+            <div class="vl-info-section-badge">Legal</div>
+            <h2 class="vl-info-section-title">Terms &amp; Conditions</h2>
+            <div class="vl-info-text">
+              <p>
+                <em>Effective Date: [Add Date]</em><br />Brand Name: Veloura
+                &nbsp;|&nbsp; Owner: Ameena
+              </p>
+
+              <h3>1. Introduction</h3>
+              <p>
+                Welcome to our website. These Terms &amp; Conditions govern your
+                use of our website and services. By accessing or purchasing from
+                our website, you agree to be bound by these terms.
+              </p>
+
+              <h3>2. Eligibility</h3>
+              <p>By using this website, you confirm that:</p>
+              <ul>
+                <li>You are using the website under supervision</li>
+                <li>You provide accurate and complete information</li>
+              </ul>
+
+              <h3>3. Products &amp; Services</h3>
+              <ul>
+                <li>We offer women's clothing</li>
+                <li>All products are subject to availability</li>
+                <li>
+                  We reserve the right to discontinue or modify products without
+                  prior notice
+                </li>
+              </ul>
+
+              <h3>4. Pricing &amp; Payments</h3>
+              <ul>
+                <li>All prices are listed in INR</li>
+                <li>Prices may change without notice</li>
+                <li>We accept payments via secure payment gateways</li>
+                <li>Orders will only be processed after successful payment</li>
+              </ul>
+
+              <h3>5. Shipping &amp; Delivery</h3>
+              <ul>
+                <li>We aim to deliver products within the estimated time</li>
+                <li>
+                  Delivery delays may occur due to unforeseen circumstances
+                </li>
+              </ul>
+
+              <h3>6. Returns &amp; Refunds</h3>
+              <ul>
+                <li>Returns are accepted within 10 days of delivery</li>
+                <li>Items must be unused, unworn, and in original packaging</li>
+                <li>Refunds will be processed after inspection</li>
+                <li>
+                  Certain items (like sale items) may not be eligible for return
+                </li>
+              </ul>
+
+              <h3>7. Intellectual Property</h3>
+              <ul>
+                <li>
+                  All content on this website (logos, images, designs, text) is
+                  the property of Veloura
+                </li>
+                <li>
+                  Unauthorized use, copying, or reproduction is strictly
+                  prohibited
+                </li>
+              </ul>
+
+              <h3>8. User Conduct</h3>
+              <p>You agree not to:</p>
+              <ul>
+                <li>Use the website for illegal purposes</li>
+                <li>Attempt to harm or hack the website</li>
+                <li>Provide false or misleading information</li>
+              </ul>
+
+              <h3>9. Limitation of Liability</h3>
+              <p>We are not liable for:</p>
+              <ul>
+                <li>Any indirect or incidental damages</li>
+                <li>Delays or interruptions in service</li>
+                <li>Misuse of products</li>
+              </ul>
+
+              <h3>10. Privacy Policy</h3>
+              <p>
+                Your personal information is handled according to our Privacy
+                Policy. We ensure your data is protected and not misused.
+              </p>
+
+              <h3>11. Changes to Terms</h3>
+              <p>
+                We reserve the right to update or modify these Terms &amp;
+                Conditions at any time without prior notice.
+              </p>
+
+              <h3>12. Governing Law</h3>
+              <p>
+                These terms are governed by the laws of India, and any disputes
+                shall be subject to the jurisdiction of appropriate courts.
+              </p>
+
+              <h3>13. Contact Information</h3>
+              <p>
+                For any queries, please contact:<br />
+                📧 Email:
+                <a
+                  href="mailto:ameenasaleem002@gmail.com"
+                  style="color: var(--vl-blush-dark)"
+                  >ameenasaleem002@gmail.com</a
+                ><br />
+                📞 Phone:
+                <a href="tel:8943812820" style="color: var(--vl-blush-dark)"
+                  >8943812820</a
+                >
+              </p>
+            </div>
+          </section>
+
+          <!-- ── FAQ ──────────────────────────── -->
+          <section class="vl-info-section" id="faq" data-testid="section-faq">
+            <div class="vl-info-section-badge">Help</div>
+            <h2 class="vl-info-section-title">Frequently Asked Questions</h2>
+
+            <div class="vl-faq-group">
+              <div class="vl-faq-list">
+
+                <div class="vl-faq-item" data-testid="faq-item-0">
+                  <button class="vl-faq-question" aria-expanded="false" data-testid="faq-question-0">
+                    How can I place an order?
+                    <svg class="vl-faq-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                  </button>
+                  <div class="vl-faq-answer" data-testid="faq-answer-0">
+                    Simply select your product and proceed to checkout.
+                  </div>
+                </div>
+
+                <div class="vl-faq-item" data-testid="faq-item-1">
+                  <button class="vl-faq-question" aria-expanded="false" data-testid="faq-question-1">
+                    Do you offer returns?
+                    <svg class="vl-faq-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                  </button>
+                  <div class="vl-faq-answer" data-testid="faq-answer-1">
+                    Yes, within 7 days of delivery (terms apply).
+                  </div>
+                </div>
+
+                <div class="vl-faq-item" data-testid="faq-item-2">
+                  <button class="vl-faq-question" aria-expanded="false" data-testid="faq-question-2">
+                    How long does delivery take?
+                    <svg class="vl-faq-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                  </button>
+                  <div class="vl-faq-answer" data-testid="faq-answer-2">
+                    5–10 working days.
+                  </div>
+                </div>
+
+                <div class="vl-faq-item" data-testid="faq-item-3">
+                  <button class="vl-faq-question" aria-expanded="false" data-testid="faq-question-3">
+                    How can I track my order?
+                    <svg class="vl-faq-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                  </button>
+                  <div class="vl-faq-answer" data-testid="faq-answer-3">
+                    A tracking link will be shared after your order has been dispatched.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- CTA -->
+          <div class="vl-info-cta" data-testid="info-cta">
+            <p>Still have questions?</p>
+            <a
+              href="/contact"
+              class="vl-cta-btn"
+              data-testid="link-info-contact"
+              >Contact Us</a
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer
+      class="vl-footer-bottom"
+      style="
+        text-align: center;
+        padding: 24px;
+        color: var(--vl-charcoal-mid);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--vl-ivory-dark);
+        margin-top: 0;
+      "
+    >
+      &copy; 2025 Veloura. All rights reserved.
+      <br>
+      <span style="font-size:0.78rem;color:var(--vl-charcoal-mid);opacity:0.7;">Developed by <a href="https://linktr.ee/4nusree" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;" data-testid="link-developer">Anusree</a></span>
+    </footer>
+
+    <script>
+      // Sidebar
+      (function () {
+        var logoBtn = document.getElementById("vlLogoBtn");
+        var sidebar = document.getElementById("vlSidebar");
+        var overlay = document.getElementById("vlSidebarOverlay");
+        var closeBtn = document.getElementById("vlSidebarClose");
+        function openSidebar() {
+          sidebar.classList.add("vl-sidebar--open");
+          overlay.classList.add("vl-sidebar-overlay--visible");
+          document.body.style.overflow = "hidden";
+        }
+        function closeSidebar() {
+          sidebar.classList.remove("vl-sidebar--open");
+          overlay.classList.remove("vl-sidebar-overlay--visible");
+          document.body.style.overflow = "";
+        }
+        if (logoBtn) logoBtn.addEventListener("click", openSidebar);
+        if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+        if (overlay) overlay.addEventListener("click", closeSidebar);
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeSidebar();
+        });
+      })();
+
+      // FAQ accordion
+      document.querySelectorAll(".vl-faq-question").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var expanded = this.getAttribute("aria-expanded") === "true";
+          document.querySelectorAll(".vl-faq-question").forEach(function (b) {
+            b.setAttribute("aria-expanded", "false");
+            b.closest(".vl-faq-item").classList.remove("vl-faq-item--open");
+          });
+          if (!expanded) {
+            this.setAttribute("aria-expanded", "true");
+            this.closest(".vl-faq-item").classList.add("vl-faq-item--open");
+          }
+        });
+      });
+
+      // Active nav link on scroll
+      var sections = document.querySelectorAll(".vl-info-section");
+      var navLinks = document.querySelectorAll(".vl-info-nav-link");
+
+      function setActiveNav() {
+        var scrollY = window.scrollY + 120;
+        sections.forEach(function (sec) {
+          if (
+            scrollY >= sec.offsetTop &&
+            scrollY < sec.offsetTop + sec.offsetHeight
+          ) {
+            navLinks.forEach(function (a) {
+              a.classList.remove("vl-info-nav-link--active");
+            });
+            var link = document.querySelector(
+              '.vl-info-nav-link[href="#' + sec.id + '"]',
+            );
+            if (link) link.classList.add("vl-info-nav-link--active");
+          }
+        });
+      }
+      window.addEventListener("scroll", setActiveNav, { passive: true });
+      setActiveNav();
+
+      // Smooth scroll for nav links
+      navLinks.forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            window.scrollTo({ top: target.offsetTop - 90, behavior: "smooth" });
+          }
+        });
+      });
+
+      // Sticky header
+      var vlHeader = document.querySelector(".vl-header");
+      if (vlHeader) {
+        window.addEventListener(
+          "scroll",
+          function () {
+            vlHeader.classList.toggle("scrolled", window.scrollY > 10);
+          },
+          { passive: true },
+        );
+      }
+    </script>
+  </body>
+</html>

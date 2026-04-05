@@ -1,0 +1,1446 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Veloura — Elegance Redefined. Discover premium Kurtis, Anarkalis, Churidhars, Crop Tops and Formal collections where style meets confidence."
+    />
+    <meta property="og:title" content="Veloura — Elegance Redefined" />
+    <meta
+      property="og:description"
+      content="Premium fashion collections curated for the discerning few."
+    />
+    <title>Veloura — Elegance Redefined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/redesign.css') }}"
+    />
+  </head>
+  <body class="veloura-redesign">
+    <!-- ========================
+       NAVBAR
+       ======================== -->
+    <header class="vl-header" role="banner">
+      <div class="vl-header-container">
+        <div class="vl-nav-pill">
+          <!-- LEFT: Logo (opens sidebar) -->
+          <button
+            class="vl-logo-link vl-logo-btn"
+            id="vlLogoBtn"
+            aria-label="Open menu"
+            data-testid="button-logo-sidebar"
+          >
+            <div class="vl-logo-circle">
+              <img
+                src="/static/images/veloura_logo.jpeg"
+                alt="Veloura"
+                class="vl-logo-img"
+              />
+            </div>
+          </button>
+
+          <!-- CENTER: Brand name -->
+          <a href="/" class="vl-brand-name" data-testid="link-brand-home"
+            >VELOURA</a
+          >
+
+          <!-- RIGHT: Icons -->
+          <div class="vl-nav-icons">
+            <!-- Search -->
+            <div class="vl-search-wrap" id="vlSearchWrap">
+              <button
+                class="vl-icon-circle"
+                id="vlSearchBtn"
+                aria-label="Search"
+                data-testid="button-search-toggle"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
+              <div class="vl-search-drop" id="vlSearchDrop">
+                <input
+                  type="text"
+                  class="vl-search-input"
+                  id="vlSearchInput"
+                  placeholder="Search products…"
+                  aria-label="Search products"
+                  data-testid="input-search"
+                />
+                <button
+                  class="vl-search-go"
+                  id="vlSearchGo"
+                  aria-label="Submit search"
+                  data-testid="button-search-submit"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cart -->
+            <a
+              href="/cart"
+              class="vl-icon-circle vl-cart-icon"
+              aria-label="View cart"
+              data-testid="button-cart"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                />
+              </svg>
+              <span
+                class="vl-badge cart-count"
+                id="cartCount"
+                data-testid="text-cart-count"
+                >0</span
+              >
+            </a>
+
+            <!-- Login / Profile (populated by script.js, styled as icon) -->
+            <div id="auth-action" class="vl-auth-action">
+              <a
+                href="/login"
+                class="vl-icon-circle"
+                aria-label="Login"
+                data-testid="button-login-default"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button
+              class="vl-hamburger"
+              id="vlHamburger"
+              aria-label="Toggle menu"
+              aria-expanded="false"
+              data-testid="button-hamburger"
+            >
+              <span></span><span></span><span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="vl-mobile-menu" id="vlMobileMenu" aria-hidden="true">
+        <!-- Mobile search -->
+        <div class="vl-mobile-search" data-testid="mobile-search-wrap">
+          <input
+            type="text"
+            class="vl-mobile-search-input"
+            id="vlMobileSearchInput"
+            placeholder="Search products…"
+            aria-label="Search products"
+            data-testid="input-mobile-search"
+          />
+          <button
+            class="vl-mobile-search-go"
+            id="vlMobileSearchGo"
+            aria-label="Submit search"
+            data-testid="button-mobile-search-submit"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+        </div>
+        <a href="/" class="vl-mobile-link" data-testid="link-mobile-home"
+          >Home</a
+        >
+        <a href="/shop" class="vl-mobile-link" data-testid="link-mobile-shop"
+          >Shop</a
+        >
+        <a
+          href="/shop?category=kurtis"
+          class="vl-mobile-link"
+          data-testid="link-mobile-kurtis"
+          >Kurtis</a
+        >
+        <a
+          href="/shop?category=anarkalis"
+          class="vl-mobile-link"
+          data-testid="link-mobile-anarkalis"
+          >Anarkalis</a
+        >
+        <a
+          href="/shop?category=crop-tops"
+          class="vl-mobile-link"
+          data-testid="link-mobile-crop-tops"
+          >Crop Tops</a
+        >
+        <a
+          href="/shop?category=churidhars"
+          class="vl-mobile-link"
+          data-testid="link-mobile-churidhars"
+          >Churidhars</a
+        >
+        <a
+          href="/shop?category=formals"
+          class="vl-mobile-link"
+          data-testid="link-mobile-formals"
+          >Formals</a
+        >
+        <a href="/cart" class="vl-mobile-link" data-testid="link-mobile-cart"
+          >Cart</a
+        >
+        <a href="/login" class="vl-mobile-link" data-testid="link-mobile-login"
+          >Login / Register</a
+        >
+      </div>
+    </header>
+
+    <!-- ========================
+       LOGO SIDEBAR
+       ======================== -->
+    <div
+      class="vl-sidebar-overlay"
+      id="vlSidebarOverlay"
+      data-testid="sidebar-overlay"
+    ></div>
+    <nav
+      class="vl-sidebar"
+      id="vlSidebar"
+      aria-label="Main navigation"
+      data-testid="sidebar-nav"
+    >
+      <div class="vl-sidebar-header">
+        <div class="vl-sidebar-logo">
+          <img src="/static/images/veloura_logo.jpeg" alt="Veloura" />
+        </div>
+        <span class="vl-sidebar-brand">VELOURA</span>
+        <button
+          class="vl-sidebar-close"
+          id="vlSidebarClose"
+          aria-label="Close menu"
+          data-testid="button-sidebar-close"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="vl-sidebar-links">
+        <li>
+          <a href="/" class="vl-sidebar-link" data-testid="sidebar-link-home">
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/information"
+            class="vl-sidebar-link"
+            data-testid="sidebar-link-information"
+          >
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </span>
+            Information Desk
+          </a>
+        </li>
+        <li>
+          <a
+            href="/contact"
+            class="vl-sidebar-link"
+            data-testid="sidebar-link-contact"
+          >
+            <span class="vl-sidebar-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+            </span>
+            Contact
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ========================
+       HERO SECTION (Auto Slider)
+       ======================== -->
+    <section
+      class="vl-hero"
+      id="hero"
+      aria-label="Hero"
+      data-testid="hero-section"
+    >
+      <div class="vl-hero-card">
+        <!-- Slides -->
+        <div class="vl-slides" id="vlSlides" aria-live="polite">
+          <div
+            class="vl-slide active"
+            data-testid="hero-slide-0"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1600&q=90&fit=crop&quot;);
+            "
+            aria-label="Slide 1: Ethnic Collection"
+          ></div>
+
+          <div
+            class="vl-slide"
+            data-testid="hero-slide-1"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=1600&q=90&fit=crop&quot;);
+            "
+            aria-label="Slide 2: Kurti Collection"
+          ></div>
+
+          <div
+            class="vl-slide"
+            data-testid="hero-slide-2"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&q=90&fit=crop&quot;);
+            "
+            aria-label="Slide 3: Designer Wear"
+          ></div>
+
+          <div
+            class="vl-slide"
+            data-testid="hero-slide-3"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&q=90&fit=crop&quot;);
+            "
+            aria-label="Slide 4: Festive Wear"
+          ></div>
+
+          <div
+            class="vl-slide"
+            data-testid="hero-slide-4"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=1600&q=90&fit=crop&quot;);
+            "
+            aria-label="Slide 5: Party Wear"
+          ></div>
+        </div>
+
+        <!-- Overlay & content stay on top of all slides -->
+        <div class="vl-hero-overlay" aria-hidden="true"></div>
+
+        <div class="vl-hero-content" data-testid="hero-content">
+          <p class="vl-hero-eyebrow" data-testid="hero-eyebrow">
+            The Veloura Edit · 2026
+          </p>
+          <h1 class="vl-hero-heading" data-testid="hero-heading">
+            Dressed in<br />Quiet Elegance
+          </h1>
+          <p class="vl-hero-sub">
+            Handpicked Indian ethnic wear for women of grace, ambition, and
+            effortless style.
+          </p>
+          <a href="/shop" class="vl-btn-primary" data-testid="button-shop-now"
+            >Discover the Collection</a
+          >
+        </div>
+
+        <!-- Slider dots -->
+        <div
+          class="vl-slider-dots"
+          id="vlSliderDots"
+          role="tablist"
+          aria-label="Slide indicators"
+          data-testid="slider-dots"
+        >
+          <button
+            class="vl-dot active"
+            data-index="0"
+            role="tab"
+            aria-selected="true"
+            aria-label="Slide 1"
+            data-testid="dot-0"
+          ></button>
+          <button
+            class="vl-dot"
+            data-index="1"
+            role="tab"
+            aria-selected="false"
+            aria-label="Slide 2"
+            data-testid="dot-1"
+          ></button>
+          <button
+            class="vl-dot"
+            data-index="2"
+            role="tab"
+            aria-selected="false"
+            aria-label="Slide 3"
+            data-testid="dot-2"
+          ></button>
+          <button
+            class="vl-dot"
+            data-index="3"
+            role="tab"
+            aria-selected="false"
+            aria-label="Slide 4"
+            data-testid="dot-3"
+          ></button>
+          <button
+            class="vl-dot"
+            data-index="4"
+            role="tab"
+            aria-selected="false"
+            aria-label="Slide 5"
+            data-testid="dot-4"
+          ></button>
+        </div>
+
+        <!-- Prev / Next arrows -->
+        <button
+          class="vl-slider-arrow vl-slider-prev"
+          id="vlSliderPrev"
+          aria-label="Previous slide"
+          data-testid="button-slider-prev"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <button
+          class="vl-slider-arrow vl-slider-next"
+          id="vlSliderNext"
+          aria-label="Next slide"
+          data-testid="button-slider-next"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================
+       OFFER BANNER (below hero)
+       ======================== -->
+    <div class="vl-offer-banner" data-testid="offer-banner">
+      <p>
+        ✦&nbsp; Get 10% OFF on your firrst order &nbsp;·&nbsp; Join the Veloura
+        family for exclusive drops & offers &nbsp;·&nbsp;
+        <a href="/shop" class="vl-offer-link" data-testid="button-offer-shop"
+          >Shop Now →</a
+        >
+        &nbsp;✦
+      </p>
+    </div>
+
+    <!-- ========================
+       CATEGORY CIRCLES (5 categories)
+       ======================== -->
+    <section
+      class="vl-categories"
+      id="categories"
+      aria-label="Shop by category"
+      data-testid="category-section"
+    >
+      <div class="vl-section-header">
+        <p class="vl-eyebrow">The Edit</p>
+        <h2 class="vl-section-title">Curated for Every Occasion</h2>
+        <p class="vl-section-sub">
+          Five distinctive silhouettes. One flawless wardrobe.
+        </p>
+      </div>
+
+      <div class="vl-circles-row" data-testid="categories-grid">
+        <div
+          class="vl-circle-item"
+          data-testid="card-category-kurtis"
+          role="button"
+          tabindex="0"
+          aria-label="Shop Kurtis"
+          onclick="window.location.href='/shop?category=kurtis'"
+        >
+          <div class="vl-circle-img-wrap vl-cat-slideshow">
+            <img
+              src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=85&fit=crop"
+              alt="Kurtis 1"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 0s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=85&fit=crop"
+              alt="Kurtis 2"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 6s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400&q=85&fit=crop"
+              alt="Kurtis 3"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 12s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1609743522653-52354461eb27?w=400&q=85&fit=crop"
+              alt="Kurtis 4"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 18s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1596783047870-7c2cb77c5a20?w=400&q=85&fit=crop"
+              alt="Kurtis 5"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 24s"
+            />
+          </div>
+          <p class="vl-circle-label" data-testid="text-category-label-kurtis">
+            Kurtis
+          </p>
+        </div>
+
+        <div
+          class="vl-circle-item"
+          data-testid="card-category-anarkalis"
+          role="button"
+          tabindex="0"
+          aria-label="Shop Anarkalis"
+          onclick="window.location.href='/shop?category=anarkalis'"
+        >
+          <div class="vl-circle-img-wrap vl-cat-slideshow">
+            <img
+              src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=400&q=85&fit=crop"
+              alt="Anarkali 1"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 0s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1610189020855-571e2df46db5?w=400&q=85&fit=crop"
+              alt="Anarkali 2"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 6s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1591785943817-c1abe5f28fa7?w=400&q=85&fit=crop"
+              alt="Anarkali 3"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 12s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400&q=85&fit=crop"
+              alt="Anarkali 4"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 18s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=85&fit=crop"
+              alt="Anarkali 5"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 24s"
+            />
+          </div>
+          <p
+            class="vl-circle-label"
+            data-testid="text-category-label-anarkalis"
+          >
+            Anarkalis
+          </p>
+        </div>
+
+        <div
+          class="vl-circle-item"
+          data-testid="card-category-crop-tops"
+          role="button"
+          tabindex="0"
+          aria-label="Shop Crop Tops"
+          onclick="window.location.href='/shop?category=crop-tops'"
+        >
+          <div class="vl-circle-img-wrap vl-cat-slideshow">
+            <img
+              src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=85&fit=crop"
+              alt="Crop Tops 1"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 0s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=85&fit=crop"
+              alt="Crop Tops 2"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 6s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1485231183945-fffde7ae021e?w=400&q=85&fit=crop"
+              alt="Crop Tops 3"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 12s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1499939667766-4afceb292d05?w=400&q=85&fit=crop"
+              alt="Crop Tops 4"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 18s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=400&q=85&fit=crop"
+              alt="Crop Tops 5"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 24s"
+            />
+          </div>
+          <p
+            class="vl-circle-label"
+            data-testid="text-category-label-crop-tops"
+          >
+            Crop Tops
+          </p>
+        </div>
+
+        <div
+          class="vl-circle-item"
+          data-testid="card-category-churidhars"
+          role="button"
+          tabindex="0"
+          aria-label="Shop Churidhars"
+          onclick="window.location.href='/shop?category=churidhars'"
+        >
+          <div class="vl-circle-img-wrap vl-cat-slideshow">
+            <img
+              src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=85&fit=crop"
+              alt="Churidhars 1"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 0s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=85&fit=crop"
+              alt="Churidhars 2"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 6s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=400&q=85&fit=crop"
+              alt="Churidhars 3"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 12s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1591785943817-c1abe5f28fa7?w=400&q=85&fit=crop"
+              alt="Churidhars 4"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 18s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1609743522653-52354461eb27?w=400&q=85&fit=crop"
+              alt="Churidhars 5"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 24s"
+            />
+          </div>
+          <p
+            class="vl-circle-label"
+            data-testid="text-category-label-churidhars"
+          >
+            Churidhars
+          </p>
+        </div>
+
+        <div
+          class="vl-circle-item"
+          data-testid="card-category-formals"
+          role="button"
+          tabindex="0"
+          aria-label="Shop Formals"
+          onclick="window.location.href='/shop?category=formals'"
+        >
+          <div class="vl-circle-img-wrap vl-cat-slideshow">
+            <img
+              src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=85&fit=crop"
+              alt="Formals 1"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 0s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1594938298603-c8148c4b4682?w=400&q=85&fit=crop"
+              alt="Formals 2"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 6s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1548678881-f54d1318dab7?w=400&q=85&fit=crop"
+              alt="Formals 3"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 12s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=85&fit=crop"
+              alt="Formals 4"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 18s"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=400&q=85&fit=crop"
+              alt="Formals 5"
+              loading="lazy"
+              class="vl-cat-slide"
+              style="animation-delay: 24s"
+            />
+          </div>
+          <p class="vl-circle-label" data-testid="text-category-label-formals">
+            Formals
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+       BRAND PILLARS
+       ======================== -->
+    <section
+      class="vl-pillars"
+      aria-label="Our values"
+      data-testid="pillars-section"
+    >
+      <div class="vl-pillars-grid">
+        <div class="vl-pillar" data-testid="pillar-quality">
+          <div class="vl-pillar-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              />
+            </svg>
+          </div>
+          <p class="vl-pillar-title">Handpicked Quality</p>
+          <p class="vl-pillar-desc">
+            Every piece is individually selected for its craftsmanship, fabric,
+            and finish.
+          </p>
+        </div>
+
+        <div class="vl-pillar" data-testid="pillar-craft">
+          <div class="vl-pillar-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </div>
+          <p class="vl-pillar-title">Authentic Craftsmanship</p>
+          <p class="vl-pillar-desc">
+            Rooted in India's rich textile tradition, created for the modern
+            woman.
+          </p>
+        </div>
+
+        <div class="vl-pillar" data-testid="pillar-delivery">
+          <div class="vl-pillar-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="1" y="3" width="15" height="13" />
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
+            </svg>
+          </div>
+          <p class="vl-pillar-title">Pan-India Delivery</p>
+          <p class="vl-pillar-desc">
+            Swift, secure delivery to your doorstep — wherever you are in India.
+          </p>
+        </div>
+
+        <div class="vl-pillar" data-testid="pillar-returns">
+          <div class="vl-pillar-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
+          </div>
+          <p class="vl-pillar-title">Hassle-Free Returns</p>
+          <p class="vl-pillar-desc">
+            Shop with complete peace of mind. Easy returns, no questions asked.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+       FEATURED COLLECTION
+       ======================== -->
+    <section
+      class="vl-featured"
+      aria-label="Featured collections"
+      data-testid="featured-section"
+    >
+      <div class="vl-section-header">
+        <p class="vl-eyebrow">Handpicked</p>
+        <h2 class="vl-section-title">This Season's Edit</h2>
+      </div>
+
+      <div class="vl-featured-grid" data-testid="featured-grid">
+        <div
+          class="vl-feat-card"
+          data-testid="featured-card-festive"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=900&q=90&fit=crop&quot;);
+          "
+        >
+          <div class="vl-feat-overlay"></div>
+          <div class="vl-feat-content">
+            <p class="vl-feat-tag">The Festive Edit</p>
+            <h3>Celebration Wear</h3>
+            <p>Created for moments that deserve to be remembered.</p>
+            <a
+              href="/shop"
+              class="vl-feat-cta"
+              data-testid="button-featured-festive"
+              >Shop the Look</a
+            >
+          </div>
+        </div>
+
+        <div
+          class="vl-feat-card"
+          data-testid="featured-card-casual"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=90&fit=crop&quot;);
+          "
+        >
+          <div class="vl-feat-overlay"></div>
+          <div class="vl-feat-content">
+            <p class="vl-feat-tag">Everyday Grace</p>
+            <h3>Easy Elegance</h3>
+            <p>Beautiful clothes that move with your life.</p>
+            <a
+              href="/shop"
+              class="vl-feat-cta"
+              data-testid="button-featured-casual"
+              >Shop the Look</a
+            >
+          </div>
+        </div>
+
+        <div
+          class="vl-feat-card"
+          data-testid="featured-card-formal"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=900&q=90&fit=crop&quot;);
+          "
+        >
+          <div class="vl-feat-overlay"></div>
+          <div class="vl-feat-content">
+            <p class="vl-feat-tag">The Office</p>
+            <h3>Power Dressing</h3>
+            <p>Refined silhouettes for women who mean business.</p>
+            <a
+              href="/shop"
+              class="vl-feat-cta"
+              data-testid="button-featured-formal"
+              >Shop the Look</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+       FOUNDER NOTE
+       ======================== -->
+    <section
+      class="vl-founder-note"
+      aria-label="Note from the founder"
+      data-testid="founder-note-section"
+    >
+      <div class="vl-founder-note-inner">
+        <p class="vl-eyebrow" data-testid="founder-eyebrow">
+          A Note from Our Founder
+        </p>
+
+        <div class="vl-founder-quote-mark" aria-hidden="true">&ldquo;</div>
+
+        <blockquote class="vl-founder-quote" data-testid="founder-quote">
+          I started Veloura because I believed Indian women deserved more — more
+          elegance, more choices, and more confidence in what they wear every
+          day. I grew up watching the women in my life transform completely when
+          they wore something that truly fit them — not just in size, but in
+          spirit.
+          <br /><br />
+          Every kurta we stitch, every anarkali we craft, carries that same
+          intention: to make you feel seen, celebrated, and beautifully
+          yourself. Veloura is not just a brand — it is a love letter to every
+          woman who deserves to feel extraordinary in her own skin.
+        </blockquote>
+
+        <div class="vl-founder-sig" data-testid="founder-signature">
+          <div class="vl-founder-sig-line"></div>
+          <div class="vl-founder-sig-text">
+            <span class="vl-founder-sig-name" data-testid="founder-name"
+              >Ameena</span
+            >
+            <span class="vl-founder-sig-title"
+              >Founder &amp; Creative Director, Veloura</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+       FOOTER
+       ======================== -->
+    <footer class="vl-footer" role="contentinfo" data-testid="footer">
+      <div class="vl-footer-top">
+        <div class="vl-footer-grid">
+          <!-- Brand -->
+          <div
+            class="vl-footer-col vl-footer-brand-col"
+            data-testid="footer-brand-col"
+          >
+            <a href="/" aria-label="Veloura Home" class="vl-footer-brand-link">
+              <img
+                src="/static/images/veloura_logo.jpeg"
+                alt="Veloura"
+                class="vl-footer-logo"
+              />
+            </a>
+            <p class="vl-footer-tagline">Where Grace Meets Fashion.</p>
+            <p class="vl-footer-desc">
+              Premium Indian ethnic wear, handpicked for the modern woman.
+              Delivered with care to every corner of India.
+            </p>
+
+            <a
+              href="https://wa.me/919876543210?text=Hi%20Veloura%2C%20I%27d%20like%20to%20enquire%20about%20your%20collections."
+              target="_blank"
+              rel="noopener"
+              class="vl-whatsapp-btn"
+              data-testid="button-whatsapp-contact"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"
+                />
+              </svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+
+          <!-- Shop -->
+          <div class="vl-footer-col" data-testid="footer-shop-col">
+            <h4 class="vl-footer-col-title">Shop</h4>
+            <ul class="vl-footer-links">
+              <li>
+                <a href="/shop" data-testid="footer-link-shop">All Products</a>
+              </li>
+              <li>
+                <a href="/shop?category=kurtis" data-testid="footer-link-kurtis"
+                  >Kurtis</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/shop?category=anarkalis"
+                  data-testid="footer-link-anarkalis"
+                  >Anarkalis</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/shop?category=crop-tops"
+                  data-testid="footer-link-crop-tops"
+                  >Crop Tops</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/shop?category=churidhars"
+                  data-testid="footer-link-churidhars"
+                  >Churidhars</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/shop?category=formals"
+                  data-testid="footer-link-formals"
+                  >Formals</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- About -->
+          <div class="vl-footer-col" data-testid="footer-about-col">
+            <h4 class="vl-footer-col-title">About</h4>
+            <ul class="vl-footer-links">
+              <li><a href="/" data-testid="footer-link-home">Home</a></li>
+              <li>
+                <a href="#about" data-testid="footer-link-about">Our Story</a>
+              </li>
+              <li>
+                <a href="/login" data-testid="footer-link-login"
+                  >Login / Register</a
+                >
+              </li>
+              <li><a href="/cart" data-testid="footer-link-cart">Cart</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact -->
+          <div class="vl-footer-col" data-testid="footer-contact-col">
+            <h4 class="vl-footer-col-title">Contact</h4>
+            <ul class="vl-footer-links vl-footer-contact-list">
+              <li>📍 Palakkad,kerala</li>
+              <li>📧 ameenasaleem002@gmail.com</li>
+              <li>📞 8943812820</li>
+            </ul>
+            <div class="vl-social-row">
+              <a
+                href="https://www.instagram.com/_veloura.co__"
+                class="vl-social-icon"
+                aria-label="Instagram"
+                data-testid="button-instagram"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vl-footer-bottom">
+        <p data-testid="text-copyright">
+          &copy; 2026 Veloura. All rights reserved. | Crafted with ♥ in India
+        </p>
+        <p class="vl-footer-developer" data-testid="text-developer-credit">
+          Developed by <a href="https://linktr.ee/4nusree" target="_blank" rel="noopener noreferrer" data-testid="link-developer">Anusree</a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- TOAST -->
+    <div
+      id="toast"
+      class="toast"
+      role="alert"
+      aria-live="polite"
+      data-testid="toast"
+    ></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      // ── Hero Auto Slider ───────────────────────────
+      (function () {
+        var slides = document.querySelectorAll(".vl-slide");
+        var dots = document.querySelectorAll(".vl-dot");
+        var prevBtn = document.getElementById("vlSliderPrev");
+        var nextBtn = document.getElementById("vlSliderNext");
+        var current = 0;
+        var total = slides.length;
+        var timer;
+
+        function goTo(idx) {
+          slides[current].classList.remove("active");
+          dots[current].classList.remove("active");
+          dots[current].setAttribute("aria-selected", "false");
+          current = (idx + total) % total;
+          slides[current].classList.add("active");
+          dots[current].classList.add("active");
+          dots[current].setAttribute("aria-selected", "true");
+        }
+
+        function startAuto() {
+          timer = setInterval(function () {
+            goTo(current + 1);
+          }, 5000);
+        }
+
+        function resetAuto() {
+          clearInterval(timer);
+          startAuto();
+        }
+
+        if (prevBtn)
+          prevBtn.addEventListener("click", function () {
+            goTo(current - 1);
+            resetAuto();
+          });
+        if (nextBtn)
+          nextBtn.addEventListener("click", function () {
+            goTo(current + 1);
+            resetAuto();
+          });
+
+        dots.forEach(function (dot) {
+          dot.addEventListener("click", function () {
+            goTo(parseInt(dot.getAttribute("data-index"), 10));
+            resetAuto();
+          });
+        });
+
+        startAuto();
+      })();
+
+      // ── Search toggle ──────────────────────────────
+      var vlSearchBtn = document.getElementById("vlSearchBtn");
+      var vlSearchDrop = document.getElementById("vlSearchDrop");
+      var vlSearchInput = document.getElementById("vlSearchInput");
+      var vlSearchGo = document.getElementById("vlSearchGo");
+
+      if (vlSearchBtn && vlSearchDrop) {
+        vlSearchBtn.addEventListener("click", function () {
+          var isOpen = vlSearchDrop.classList.toggle("open");
+          if (isOpen && vlSearchInput) vlSearchInput.focus();
+        });
+        document.addEventListener("click", function (e) {
+          var wrap = document.getElementById("vlSearchWrap");
+          if (wrap && !wrap.contains(e.target))
+            vlSearchDrop.classList.remove("open");
+        });
+      }
+      if (vlSearchGo && vlSearchInput) {
+        vlSearchGo.addEventListener("click", function () {
+          var q = vlSearchInput.value.trim();
+          if (q) window.location.href = "/shop?search=" + encodeURIComponent(q);
+        });
+        vlSearchInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            var q = vlSearchInput.value.trim();
+            if (q)
+              window.location.href = "/shop?search=" + encodeURIComponent(q);
+          }
+        });
+      }
+
+      // ── Mobile search ──────────────────────────────
+      var vlMobileSearchGo = document.getElementById("vlMobileSearchGo");
+      var vlMobileSearchInput = document.getElementById("vlMobileSearchInput");
+      if (vlMobileSearchGo && vlMobileSearchInput) {
+        vlMobileSearchGo.addEventListener("click", function () {
+          var q = vlMobileSearchInput.value.trim();
+          if (q) window.location.href = "/shop?search=" + encodeURIComponent(q);
+        });
+        vlMobileSearchInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            var q = vlMobileSearchInput.value.trim();
+            if (q)
+              window.location.href = "/shop?search=" + encodeURIComponent(q);
+          }
+        });
+      }
+
+      // ── Mobile hamburger ───────────────────────────
+      var vlHamburger = document.getElementById("vlHamburger");
+      var vlMobileMenu = document.getElementById("vlMobileMenu");
+      if (vlHamburger && vlMobileMenu) {
+        vlHamburger.addEventListener("click", function () {
+          var isOpen = vlMobileMenu.classList.toggle("open");
+          vlHamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          vlMobileMenu.setAttribute("aria-hidden", isOpen ? "false" : "true");
+        });
+      }
+
+      // ── Category circle keyboard support ──────────
+      document.querySelectorAll(".vl-circle-item").forEach(function (item) {
+        item.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            item.click();
+          }
+        });
+      });
+
+      // ── Newsletter form ────────────────────────────
+      var nlForm = document.getElementById("newsletter-form");
+      var nlMsg = document.getElementById("newsletter-msg");
+      if (nlForm) {
+        nlForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var email = document.getElementById("newsletter-email").value.trim();
+          if (!email || !email.includes("@")) {
+            nlMsg.textContent = "Please enter a valid email address.";
+            nlMsg.style.color = "#f5c6cb";
+            return;
+          }
+          nlMsg.textContent =
+            "Thanks for subscribing! Watch your inbox for exclusives.";
+          nlMsg.style.color = "rgba(255,255,255,0.9)";
+          document.getElementById("newsletter-email").value = "";
+        });
+      }
+
+      // ── Scroll reveal ──────────────────────────────
+      var revealEls = document.querySelectorAll(
+        ".vl-founder-note-inner, .vl-feat-card, .vl-circle-item",
+      );
+      if ("IntersectionObserver" in window) {
+        var revealObs = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("reveal-visible");
+                revealObs.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1 },
+        );
+        revealEls.forEach(function (el) {
+          el.classList.add("reveal-hidden");
+          revealObs.observe(el);
+        });
+      }
+
+      // ── Sticky header shadow ───────────────────────
+      var vlHeader = document.querySelector(".vl-header");
+      if (vlHeader) {
+        window.addEventListener(
+          "scroll",
+          function () {
+            vlHeader.classList.toggle("scrolled", window.scrollY > 10);
+          },
+          { passive: true },
+        );
+      }
+
+      // ── Logo Sidebar ────────────────────────────
+      (function () {
+        var logoBtn = document.getElementById("vlLogoBtn");
+        var sidebar = document.getElementById("vlSidebar");
+        var overlay = document.getElementById("vlSidebarOverlay");
+        var closeBtn = document.getElementById("vlSidebarClose");
+
+        function openSidebar() {
+          sidebar.classList.add("vl-sidebar--open");
+          overlay.classList.add("vl-sidebar-overlay--visible");
+          document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+          sidebar.classList.remove("vl-sidebar--open");
+          overlay.classList.remove("vl-sidebar-overlay--visible");
+          document.body.style.overflow = "";
+        }
+
+        if (logoBtn) logoBtn.addEventListener("click", openSidebar);
+        if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+        if (overlay) overlay.addEventListener("click", closeSidebar);
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeSidebar();
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact Veloura — Reach out to us for any queries, feedback or support." />
+  <title>Contact Us — Veloura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/redesign.css') }}" />
+</head>
+<body class="veloura-redesign">
+
+  <!-- NAVBAR -->
+  <header class="vl-header" role="banner">
+    <div class="vl-header-container">
+      <div class="vl-nav-pill">
+        <button class="vl-logo-link vl-logo-btn" id="vlLogoBtn" aria-label="Open menu" data-testid="button-logo-sidebar">
+          <div class="vl-logo-circle">
+            <img src="/static/images/veloura_logo.jpeg" alt="Veloura" class="vl-logo-img" />
+          </div>
+        </button>
+        <a href="/" class="vl-brand-name" data-testid="link-brand-home">VELOURA</a>
+        <div class="vl-nav-icons">
+          <a href="/cart" class="vl-icon-circle vl-cart-icon" aria-label="View cart" data-testid="button-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </a>
+          <a href="/login" class="vl-icon-circle" aria-label="Login" data-testid="button-login">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <div class="vl-sidebar-overlay" id="vlSidebarOverlay" data-testid="sidebar-overlay"></div>
+  <nav class="vl-sidebar" id="vlSidebar" aria-label="Main navigation" data-testid="sidebar-nav">
+    <div class="vl-sidebar-header">
+      <div class="vl-sidebar-logo">
+        <img src="/static/images/veloura_logo.jpeg" alt="Veloura" />
+      </div>
+      <span class="vl-sidebar-brand">VELOURA</span>
+      <button class="vl-sidebar-close" id="vlSidebarClose" aria-label="Close menu" data-testid="button-sidebar-close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="vl-sidebar-links">
+      <li>
+        <a href="/" class="vl-sidebar-link" data-testid="sidebar-link-home">
+          <span class="vl-sidebar-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="/information" class="vl-sidebar-link" data-testid="sidebar-link-information">
+          <span class="vl-sidebar-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </span>
+          Information Desk
+        </a>
+      </li>
+      <li>
+        <a href="/contact" class="vl-sidebar-link vl-sidebar-link--active" data-testid="sidebar-link-contact">
+          <span class="vl-sidebar-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          Contact
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- PAGE CONTENT -->
+  <main class="vl-page-main" data-testid="contact-page">
+    <div class="vl-page-hero">
+      <h1 class="vl-page-title" data-testid="contact-title">Contact Us</h1>
+      <p class="vl-page-subtitle" data-testid="contact-subtitle">We're here to help you 🤍</p>
+    </div>
+
+    <div class="vl-page-content">
+      <div class="vl-contact-grid">
+
+        <!-- Contact Info -->
+        <div class="vl-contact-info" data-testid="contact-info">
+          <div class="vl-contact-card">
+            <div class="vl-contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6 6l1.22-1.22a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <h3 class="vl-contact-label" data-testid="contact-phone-label">Phone</h3>
+              <p class="vl-contact-value" data-testid="contact-phone-value">8943812820</p>
+            </div>
+          </div>
+
+          <div class="vl-contact-card">
+            <div class="vl-contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <h3 class="vl-contact-label" data-testid="contact-email-label">Email</h3>
+              <p class="vl-contact-value" data-testid="contact-email-value">ameenasaleem002@gmail.com</p>
+            </div>
+          </div>
+
+          <div class="vl-contact-card">
+            <div class="vl-contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <h3 class="vl-contact-label" data-testid="contact-address-label">Location</h3>
+              <p class="vl-contact-value" data-testid="contact-address-value">Palakkad, Kerala, India</p>
+            </div>
+          </div>
+
+          <div class="vl-contact-card">
+            <div class="vl-contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <h3 class="vl-contact-label" data-testid="contact-hours-label">Working Hours</h3>
+              <p class="vl-contact-value" data-testid="contact-hours-value">Mon – Sat | 10 AM – 6 PM</p>
+            </div>
+          </div>
+
+          <div class="vl-contact-card">
+            <div class="vl-contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </div>
+            <div>
+              <h3 class="vl-contact-label" data-testid="contact-instagram-label">Instagram</h3>
+              <a href="https://www.instagram.com/_veloura.co__" target="_blank" rel="noopener noreferrer" class="vl-contact-value" data-testid="contact-instagram-value" style="color:inherit;text-decoration:underline;">@_veloura.co_</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="vl-contact-form-wrap" data-testid="contact-form-wrap">
+          <h2 class="vl-contact-form-title">Send us a Message</h2>
+          <form class="vl-contact-form" id="contactForm" data-testid="contact-form">
+            <div class="vl-form-group">
+              <label class="vl-form-label" for="contactName">Your Name</label>
+              <input type="text" id="contactName" class="vl-form-input" placeholder="e.g. Priya Sharma" required data-testid="input-contact-name" />
+            </div>
+            <div class="vl-form-group">
+              <label class="vl-form-label" for="contactEmail">Email Address</label>
+              <input type="email" id="contactEmail" class="vl-form-input" placeholder="priya@example.com" required data-testid="input-contact-email" />
+            </div>
+            <div class="vl-form-group">
+              <label class="vl-form-label" for="contactSubject">Subject</label>
+              <input type="text" id="contactSubject" class="vl-form-input" placeholder="How can we help?" data-testid="input-contact-subject" />
+            </div>
+            <div class="vl-form-group">
+              <label class="vl-form-label" for="contactMessage">Message</label>
+              <textarea id="contactMessage" class="vl-form-input vl-form-textarea" placeholder="Write your message here…" required rows="5" data-testid="input-contact-message"></textarea>
+            </div>
+            <button type="submit" class="vl-contact-submit" data-testid="button-contact-submit">Send Message</button>
+            <p class="vl-contact-success" id="contactSuccess" style="display:none;" data-testid="text-contact-success">Thank you! We'll get back to you soon.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="vl-footer-bottom" style="text-align:center;padding:24px;color:var(--vl-charcoal-mid);font-size:0.85rem;border-top:1px solid var(--vl-ivory-dark);margin-top:40px;">
+    &copy; 2025 Veloura. All rights reserved.
+    <br>
+    <span style="font-size:0.78rem;opacity:0.7;">Developed by <a href="https://linktr.ee/4nusree" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;" data-testid="link-developer">Anusree</a></span>
+  </footer>
+
+  <script>
+    // Sidebar
+    (function () {
+      var logoBtn  = document.getElementById('vlLogoBtn');
+      var sidebar  = document.getElementById('vlSidebar');
+      var overlay  = document.getElementById('vlSidebarOverlay');
+      var closeBtn = document.getElementById('vlSidebarClose');
+      function openSidebar()  { sidebar.classList.add('vl-sidebar--open'); overlay.classList.add('vl-sidebar-overlay--visible'); document.body.style.overflow = 'hidden'; }
+      function closeSidebar() { sidebar.classList.remove('vl-sidebar--open'); overlay.classList.remove('vl-sidebar-overlay--visible'); document.body.style.overflow = ''; }
+      if (logoBtn)  logoBtn.addEventListener('click', openSidebar);
+      if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+      if (overlay)  overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSidebar(); });
+    })();
+
+    // Contact form
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var form = this;
+      var submitBtn = form.querySelector('[data-testid="button-contact-submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      var payload = {
+        name:    document.getElementById('contactName').value.trim(),
+        email:   document.getElementById('contactEmail').value.trim(),
+        subject: document.getElementById('contactSubject').value.trim(),
+        message: document.getElementById('contactMessage').value.trim()
+      };
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          document.getElementById('contactSuccess').style.display = 'block';
+          form.reset();
+        }
+      })
+      .catch(function() {
+        alert('Something went wrong. Please try again.');
+      })
+      .finally(function() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      });
+    });
+
+    // Sticky header
+    var vlHeader = document.querySelector('.vl-header');
+    if (vlHeader) {
+      window.addEventListener('scroll', function () {
+        vlHeader.classList.toggle('scrolled', window.scrollY > 10);
+      }, { passive: true });
+    }
+  </script>
+</body>
+</html>

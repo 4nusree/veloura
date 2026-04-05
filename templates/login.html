@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Veloura — Login or create your account." />
+  <title>Login — Veloura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-split" data-testid="auth-split">
+
+    <!-- LEFT: Fashion Image -->
+    <div class="auth-left" data-testid="auth-left">
+      <div class="auth-left-overlay">
+        <div class="auth-left-content">
+          <div class="auth-brand-mark">VELOURA</div>
+          <h1 class="auth-left-title">Welcome to<br /><em>Veloura</em></h1>
+          <p class="auth-left-sub">Elegance crafted for you</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Auth Form -->
+    <div class="auth-right" data-testid="auth-right">
+
+      <!-- Back to home -->
+      <a href="/" class="auth-back-link" data-testid="link-auth-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to store
+      </a>
+
+      <div class="auth-card" data-testid="auth-card">
+
+        <!-- Header -->
+        <div class="auth-card-head">
+          <p class="auth-eyebrow" id="auth-eyebrow" data-testid="text-auth-eyebrow">Welcome back</p>
+          <h2 class="auth-card-title" id="auth-card-title" data-testid="text-auth-title">Sign In</h2>
+          <p class="auth-card-sub" id="auth-card-sub" data-testid="text-auth-sub">Enter your credentials to access your account</p>
+        </div>
+
+        <!-- Message -->
+        <div id="auth-message" class="auth-message" style="display:none;" role="alert" data-testid="text-auth-message"></div>
+
+        <!-- Form -->
+        <form id="auth-form" class="auth-form" novalidate data-testid="form-auth">
+
+          <!-- REGISTER ONLY: Full Name -->
+          <div class="auth-field register-only" id="field-fullname" style="display:none;">
+            <label class="auth-label" for="fullname">Full Name</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="fullname" name="fullname" class="auth-input" placeholder="Your full name" autocomplete="name" data-testid="input-fullname" />
+            </div>
+            <span class="auth-error" id="err-fullname" data-testid="error-fullname"></span>
+          </div>
+
+          <!-- Username (login) / Email (register) -->
+          <div class="auth-field" id="field-email">
+            <label class="auth-label" for="email" id="label-email">Username</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="email" name="email" class="auth-input" placeholder="Enter your username" autocomplete="username" data-testid="input-email" required />
+            </div>
+            <span class="auth-error" id="err-email" data-testid="error-email"></span>
+          </div>
+
+          <!-- REGISTER ONLY: Phone -->
+          <div class="auth-field register-only" id="field-phone" style="display:none;">
+            <label class="auth-label" for="phone">Phone Number</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.72 16z"/></svg>
+              <input type="tel" id="phone" name="phone" class="auth-input" placeholder="10-digit phone number" autocomplete="tel" data-testid="input-phone" />
+            </div>
+            <span class="auth-error" id="err-phone" data-testid="error-phone"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="auth-field" id="field-password">
+            <label class="auth-label" for="password">Password</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="password" name="password" class="auth-input" placeholder="Minimum 6 characters" autocomplete="current-password" data-testid="input-password" required />
+              <button type="button" class="auth-eye-btn" id="toggle-pass" aria-label="Toggle password visibility" data-testid="button-toggle-password">
+                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pw-strength register-only" id="pw-strength-wrap" style="display:none;" data-testid="pw-strength-wrap">
+              <div class="pw-strength-bars" data-testid="pw-strength-bars">
+                <div class="pw-strength-bar" id="pw-bar-1" data-testid="pw-strength-bar-1"></div>
+                <div class="pw-strength-bar" id="pw-bar-2" data-testid="pw-strength-bar-2"></div>
+                <div class="pw-strength-bar" id="pw-bar-3" data-testid="pw-strength-bar-3"></div>
+                <div class="pw-strength-bar" id="pw-bar-4" data-testid="pw-strength-bar-4"></div>
+              </div>
+              <span class="pw-strength-label" id="pw-strength-label" data-testid="text-pw-strength-label"></span>
+            </div>
+            <span class="auth-error" id="err-password" data-testid="error-password"></span>
+          </div>
+
+          <!-- REGISTER ONLY: Confirm Password -->
+          <div class="auth-field register-only" id="field-confirm" style="display:none;">
+            <label class="auth-label" for="confirm-password">Confirm Password</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="confirm-password" name="confirm-password" class="auth-input" placeholder="Re-enter your password" autocomplete="new-password" data-testid="input-confirm-password" />
+              <button type="button" class="auth-eye-btn" id="toggle-confirm" aria-label="Toggle confirm password visibility" data-testid="button-toggle-confirm-password">
+                <svg id="eye-icon-confirm" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="auth-error" id="err-confirm" data-testid="error-confirm-password"></span>
+          </div>
+
+          <!-- Forgot Password (login mode only) -->
+          <div class="auth-field login-only" id="field-forgot" style="text-align:right;margin-top:-8px;margin-bottom:4px;">
+            <a href="/forgot-password" class="auth-terms-link" style="font-size:0.82rem;" data-testid="link-forgot-password">Forgot password?</a>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="auth-submit-btn" class="auth-submit-btn" data-testid="button-auth-submit">
+            Sign In
+          </button>
+
+          <!-- Terms -->
+          <p class="auth-terms" data-testid="text-auth-terms">
+            By continuing, you agree to our <a href="#" class="auth-terms-link">Terms of Service</a> &amp; <a href="#" class="auth-terms-link">Privacy Policy</a>
+          </p>
+
+        </form>
+
+        <!-- Toggle -->
+        <div class="auth-toggle" data-testid="auth-toggle">
+          <span id="auth-toggle-text" data-testid="text-toggle-prompt">Don't have an account?</span>
+          <button id="auth-toggle-btn" class="auth-toggle-btn" data-testid="button-toggle-mode">Sign In</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
