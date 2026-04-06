@@ -190,6 +190,17 @@
     })();
 
     // Contact form
+    var csrfToken = null;
+    function getCsrfToken() {
+      if (csrfToken) return Promise.resolve(csrfToken);
+      return fetch('/api/csrf-token')
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          csrfToken = data.csrf_token || '';
+          return csrfToken;
+        });
+    }
+
     document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
       var form = this;
@@ -204,10 +215,13 @@
         message: document.getElementById('contactMessage').value.trim()
       };
 
-      fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      getCsrfToken()
+      .then(function (csrf) {
+        return fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+          body: JSON.stringify(payload)
+        });
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {

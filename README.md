@@ -11,6 +11,9 @@ A premium fashion e-commerce site built with **Flask (Python)** + **vanilla Java
 ## Project Structure
 ```
 app.py                  — Flask app, all API routes, DB init & migrations
+db/models.py            — DB connection + reusable query helpers
+services/               — Service-layer business logic helpers
+routes/                 — Blueprint modules for route grouping
 database.db             — SQLite database
 templates/
   index.html            — Home page (hero slider, categories, trending)
@@ -30,9 +33,11 @@ static/
 ```
 
 ## Database Schema
-- **users**: id, username, password (SHA-256), role, full_name, email, phone, disabled, created_at
+- **users**: id, username, password (bcrypt), role, full_name, email, phone, disabled, created_at
 - **products**: id, name, code, price, image, category, sizes, colors, images (JSON), video, stock, description, active
-- **orders**: id, items (JSON), total, username, customer_name, phone, address, status, notes, payment_method, created_at
+- **product_variants**: id, product_id (FK), size, color, stock, created_at
+- **orders**: id, user_id (FK), total, username, customer_name, phone, address, status, notes, payment_method, created_at
+- **order_items**: id, order_id (FK), product_id (FK), variant_id (FK), quantity, price, created_at
 - **reviews**: id, product_id, username, rating, comment, image_url, created_at
 - **audit_log**: id, action, entity, entity_id, username, detail, created_at
 
@@ -73,9 +78,11 @@ static/
 | POST | /api/login | Login |
 | GET | /api/reviews | Get reviews |
 | POST | /api/reviews | Post review |
+| GET | /api/csrf-token | Get session CSRF token |
 
 ## Auth Pattern
-Admin APIs check `X-User-Role: admin` header. Frontend stores `userRole` and `username` in `localStorage`.
+Authentication uses server-side Flask sessions. Admin APIs validate role from server session state.
+All state-changing API requests (POST/PUT/PATCH/DELETE) require `X-CSRF-Token` matching the session token.
 
 ## Running
 The `Start application` workflow runs `python app.py` on port 5000.

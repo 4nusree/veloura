@@ -1,5 +1,4 @@
 import sqlite3
-import hashlib
 import json
 import csv
 import io
@@ -8,7 +7,21 @@ import secrets
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
-from flask import Flask, render_template, jsonify, request, Response, stream_with_context
+from flask import Flask, render_template, jsonify, request, Response, session, redirect, url_for
+from db.models import (
+    get_db,
+    add_column_if_missing,
+    log_action,
+    get_or_create_variant,
+    require_admin_session,
+    get_actor_from_session,
+)
+from services.auth_service import (
+    ensure_csrf_token as auth_ensure_csrf_token,
+    is_valid_csrf as auth_is_valid_csrf,
+    hash_password as auth_hash_password,
+    verify_password as auth_verify_password,
+)
 
 # ── Mailtrap SMTP config ───────────────────────────────────────────────────────
 SMTP_SERVER = os.environ.get("SMTP_SERVER", "sandbox.smtp.mailtrap.io")
@@ -23,8 +36,12 @@ except ImportError:
     _has_cors = False
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-change-me")
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
 if _has_cors:
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
 @app.after_request
 def add_no_cache_headers(response):
@@ -33,24 +50,26 @@ def add_no_cache_headers(response):
     response.headers["Expires"] = "0"
     return response
 
-DB_PATH = 'database.db'
+
+def ensure_csrf_token():
+    return auth_ensure_csrf_token()
 
 
-# ===========================
-# DATABASE SETUP
-# ===========================
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+def is_valid_csrf():
+    return auth_is_valid_csrf()
 
 
-def _add_col(conn, table, col_def):
-    try:
-        conn.execute(f"ALTER TABLE {table} ADD COLUMN {col_def}")
-    except Exception:
-        pass
-
+@app.before_request
+def csrf_protect():
+    if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
+        return None
+    if not request.path.startswith("/api/"):
+        return None
+    if request.path == "/api/csrf-token":
+        return None
+    if not is_valid_csrf():
+        return jsonify({"error": "Session expired. Please refresh."}), 403
+    return None
 
 def init_db():
     conn = get_db()
@@ -89,6 +108,41 @@ def init_db():
             created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS product_variants (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            size       TEXT NOT NULL,
+            color      TEXT NOT NULL,
+            stock      INTEGER NOT NULL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+            UNIQUE(product_id, size, color)
+        )
+    ''')
+
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS order_items (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id   INTEGER NOT NULL,
+            product_id INTEGER NOT NULL,
+            variant_id INTEGER,
+            quantity   INTEGER NOT NULL DEFAULT 1,
+            price      INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
+            FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE SET NULL
+        )
+    ''')
+
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_orders_status_created_at ON orders(status, created_at)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_order_items_variant_id ON order_items(variant_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_variants_product_size_color ON product_variants(product_id, size, color)")
 
     conn.execute('''
         CREATE TABLE IF NOT EXISTS reviews (
@@ -138,7 +192,7 @@ def init_db():
     # users columns
     for col in ("full_name TEXT", "email TEXT", "phone TEXT", "disabled INTEGER DEFAULT 0",
                 "created_at TIMESTAMP"):
-        _add_col(conn, "users", col)
+        add_column_if_missing(conn, "users", col)
 
     # products columns
     for col_def in (
@@ -151,19 +205,76 @@ def init_db():
         "active      INTEGER DEFAULT 1",
         "code        TEXT",
     ):
-        _add_col(conn, "products", col_def)
+        add_column_if_missing(conn, "products", col_def)
 
     # orders columns
     for col in ("customer_name TEXT", "phone TEXT", "address TEXT",
                 "status TEXT DEFAULT 'Pending'", "notes TEXT",
+                "user_id INTEGER",
                 "payment_method TEXT DEFAULT 'COD'"):
-        _add_col(conn, "orders", col)
+        add_column_if_missing(conn, "orders", col)
 
     # Backfill
     conn.execute("UPDATE products SET sizes  = 'S,M,L,XL'        WHERE sizes  IS NULL OR sizes  = ''")
     conn.execute("UPDATE products SET colors = 'Black,White,Pink' WHERE colors IS NULL OR colors = ''")
     conn.execute("UPDATE products SET active = 1                  WHERE active IS NULL")
     conn.execute("UPDATE orders   SET status = 'Pending'          WHERE status IS NULL")
+
+    # Seed normalized product variants for products missing variant rows.
+    products_for_variants = conn.execute(
+        "SELECT id, sizes, colors, stock FROM products"
+    ).fetchall()
+    for p in products_for_variants:
+        has_variants = conn.execute(
+            "SELECT 1 FROM product_variants WHERE product_id=? LIMIT 1", (p["id"],)
+        ).fetchone()
+        if has_variants:
+            continue
+        sizes = [s.strip() for s in (p["sizes"] or "One Size").split(",") if s.strip()] or ["One Size"]
+        colors = [c.strip() for c in (p["colors"] or "Default").split(",") if c.strip()] or ["Default"]
+        base_stock = int(p["stock"] if p["stock"] is not None else 0)
+        variant_stock = max(0, base_stock) if len(sizes) * len(colors) <= 1 else max(0, base_stock // max(1, len(sizes) * len(colors)))
+        for size in sizes:
+            for color in colors:
+                conn.execute(
+                    "INSERT OR IGNORE INTO product_variants (product_id, size, color, stock) VALUES (?, ?, ?, ?)",
+                    (p["id"], size, color, variant_stock)
+                )
+
+    # Backfill orders.user_id from username where possible.
+    conn.execute(
+        "UPDATE orders SET user_id = (SELECT id FROM users WHERE users.username = orders.username) WHERE user_id IS NULL"
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id)")
+
+    # Migrate legacy JSON order items into normalized order_items table.
+    legacy_orders = conn.execute(
+        "SELECT id, items FROM orders WHERE id NOT IN (SELECT DISTINCT order_id FROM order_items)"
+    ).fetchall()
+    for order in legacy_orders:
+        try:
+            parsed_items = json.loads(order["items"] or "[]")
+        except Exception:
+            parsed_items = []
+        for it in parsed_items:
+            pid = it.get("id")
+            if not pid:
+                continue
+            qty = int(it.get("qty") or it.get("quantity") or 1)
+            if qty < 1:
+                qty = 1
+            price = int(it.get("price") or 0)
+            size = (it.get("size") or "One Size").strip() or "One Size"
+            color = (it.get("color") or "Default").strip() or "Default"
+            variant = conn.execute(
+                "SELECT id FROM product_variants WHERE product_id=? AND size=? AND color=?",
+                (pid, size, color)
+            ).fetchone()
+            variant_id = variant["id"] if variant else None
+            conn.execute(
+                "INSERT INTO order_items (order_id, product_id, variant_id, quantity, price) VALUES (?, ?, ?, ?, ?)",
+                (order["id"], pid, variant_id, qty, price)
+            )
 
     # Seed default products if table is empty
     count = conn.execute('SELECT COUNT(*) FROM products').fetchone()[0]
@@ -707,14 +818,11 @@ def init_db():
 
 
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    return auth_hash_password(password)
 
 
-def log_action(conn, action, entity, entity_id, username, detail=""):
-    conn.execute(
-        "INSERT INTO audit_log (action, entity, entity_id, username, detail) VALUES (?, ?, ?, ?, ?)",
-        (action, entity, entity_id, username, detail)
-    )
+def verify_password(password, stored_hash):
+    return auth_verify_password(password, stored_hash)
 
 
 init_db()
@@ -749,6 +857,8 @@ def login_page():
 
 @app.route("/admin")
 def admin_page():
+    if session.get("role") != "admin":
+        return redirect(url_for("login_page"))
     return render_template("admin.html")
 
 @app.route("/product")
@@ -768,13 +878,10 @@ def shop_page():
 # HELPERS
 # ===========================
 def require_admin():
-    role = request.headers.get("X-User-Role", "")
-    if role != "admin":
-        return False
-    return True
+    return require_admin_session()
 
 def get_actor():
-    return request.headers.get("X-Username", "admin")
+    return get_actor_from_session()
 
 
 # ===========================
@@ -783,6 +890,20 @@ def get_actor():
 @app.route("/api/status")
 def status():
     return jsonify({"status": "ok", "brand": "ATELIER"})
+
+
+@app.route("/api/csrf-token", methods=["GET"])
+def csrf_token():
+    return jsonify({"csrf_token": ensure_csrf_token()}), 200
+
+
+@app.route("/api/me", methods=["GET"])
+def current_user():
+    username = session.get("username")
+    role = session.get("role")
+    if not username or not role:
+        return jsonify({"authenticated": False}), 401
+    return jsonify({"authenticated": True, "username": username, "role": role}), 200
 
 
 # ===========================
@@ -1030,7 +1151,7 @@ def import_products():
 @app.route("/api/orders", methods=["POST"])
 def place_order():
     data          = request.get_json()
-    items         = data.get("items")
+    items         = data.get("items") or []
     total         = data.get("total")
     username      = (data.get("username")      or "guest").strip()
     customer_name = (data.get("customer_name") or "").strip()
@@ -1048,15 +1169,48 @@ def place_order():
     except (TypeError, ValueError):
         return jsonify({"error": "total must be a number"}), 400
 
-    items_json = json.dumps(items)
-
     conn = get_db()
+    user_id = session.get("user_id")
+    if not user_id and username and username != "guest":
+        user_row = conn.execute("SELECT id FROM users WHERE username=?", (username,)).fetchone()
+        user_id = user_row["id"] if user_row else None
+
+    normalized_items = []
+    computed_total = 0
+    for item in items:
+        try:
+            product_id = int(item.get("id"))
+        except (TypeError, ValueError):
+            conn.close()
+            return jsonify({"error": "Each item must include a valid product id"}), 400
+        qty = int(item.get("qty") or item.get("quantity") or 1)
+        if qty < 1:
+            qty = 1
+        price = int(item.get("price") or 0)
+        size = (item.get("size") or "One Size").strip()
+        color = (item.get("color") or "Default").strip()
+        variant_id = get_or_create_variant(conn, product_id, size, color)
+        computed_total += price * qty
+        normalized_items.append({
+            "product_id": product_id,
+            "variant_id": variant_id,
+            "quantity": qty,
+            "price": price,
+        })
+
+    if computed_total != total:
+        total = computed_total
+
     cur = conn.execute(
-        "INSERT INTO orders (items, total, username, customer_name, phone, address, status, payment_method) VALUES (?, ?, ?, ?, ?, ?, 'Pending', ?)",
-        (items_json, total, username, customer_name, phone, address, payment_method)
+        "INSERT INTO orders (items, total, username, user_id, customer_name, phone, address, status, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?)",
+        ("[]", total, username, user_id, customer_name, phone, address, payment_method)
     )
-    conn.commit()
     order_id = cur.lastrowid
+    for item in normalized_items:
+        conn.execute(
+            "INSERT INTO order_items (order_id, product_id, variant_id, quantity, price) VALUES (?, ?, ?, ?, ?)",
+            (order_id, item["product_id"], item["variant_id"], item["quantity"], item["price"])
+        )
     log_action(conn, "create", "order", order_id, username, f"Order placed for ₹{total}")
     conn.commit()
     conn.close()
@@ -1095,19 +1249,41 @@ def get_orders():
 
     offset = (page - 1) * per_page
     rows   = conn.execute(
-        f"SELECT id, items, total, username, customer_name, phone, address, created_at, status, notes, payment_method "
+        f"SELECT id, total, username, user_id, customer_name, phone, address, created_at, status, notes, payment_method "
         f"FROM orders {where_sql} ORDER BY id DESC LIMIT ? OFFSET ?",
         params + [per_page, offset]
     ).fetchall()
+    order_ids = [r["id"] for r in rows]
+    items_by_order = {}
+    if order_ids:
+        placeholders = ",".join("?" * len(order_ids))
+        item_rows = conn.execute(
+            f"SELECT oi.order_id, oi.product_id, oi.variant_id, oi.quantity, oi.price, "
+            f"p.name AS product_name, p.image AS product_image, pv.size, pv.color "
+            f"FROM order_items oi "
+            f"JOIN products p ON p.id = oi.product_id "
+            f"LEFT JOIN product_variants pv ON pv.id = oi.variant_id "
+            f"WHERE oi.order_id IN ({placeholders}) ORDER BY oi.id ASC",
+            order_ids
+        ).fetchall()
+        for it in item_rows:
+            items_by_order.setdefault(it["order_id"], []).append({
+                "id": it["product_id"],
+                "variant_id": it["variant_id"],
+                "name": it["product_name"],
+                "image": it["product_image"],
+                "size": it["size"] or "",
+                "color": it["color"] or "",
+                "quantity": it["quantity"],
+                "qty": it["quantity"],
+                "price": it["price"],
+            })
     conn.close()
 
     orders = []
     for r in rows:
         o = dict(r)
-        try:
-            o["items"] = json.loads(o["items"])
-        except Exception:
-            o["items"] = []
+        o["items"] = items_by_order.get(r["id"], [])
         orders.append(o)
 
     return jsonify({"orders": orders, "total": total_count, "page": page, "per_page": per_page})
@@ -1155,16 +1331,20 @@ def export_orders():
 
     conn = get_db()
     rows = conn.execute(
-        "SELECT id, username, customer_name, phone, address, total, status, payment_method, created_at FROM orders ORDER BY id DESC"
+        "SELECT o.id, o.username, o.customer_name, o.phone, o.address, o.total, o.status, o.payment_method, o.created_at, "
+        "COUNT(oi.id) AS item_lines "
+        "FROM orders o LEFT JOIN order_items oi ON oi.order_id = o.id "
+        "GROUP BY o.id "
+        "ORDER BY o.id DESC"
     ).fetchall()
     conn.close()
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["id", "username", "customer_name", "phone", "address", "total", "status", "payment_method", "created_at"])
+    writer.writerow(["id", "username", "customer_name", "phone", "address", "total", "status", "payment_method", "item_lines", "created_at"])
     for r in rows:
         writer.writerow([r["id"], r["username"], r["customer_name"], r["phone"],
-                         r["address"], r["total"], r["status"], r["payment_method"], r["created_at"]])
+                         r["address"], r["total"], r["status"], r["payment_method"], r["item_lines"], r["created_at"]])
 
     output.seek(0)
     return Response(
@@ -1212,8 +1392,8 @@ def get_users():
     for r in rows:
         u = dict(r)
         stats = conn.execute(
-            "SELECT COUNT(*) as order_count, COALESCE(SUM(total),0) as total_spent FROM orders WHERE username=?",
-            (u["username"],)
+            "SELECT COUNT(*) as order_count, COALESCE(SUM(total),0) as total_spent FROM orders WHERE user_id=?",
+            (u["id"],)
         ).fetchone()
         u["order_count"]  = stats["order_count"]
         u["total_spent"]  = stats["total_spent"]
@@ -1363,25 +1543,15 @@ def chart_top_products():
         return jsonify({"error": "Unauthorized"}), 403
 
     conn  = get_db()
-    orders_rows = conn.execute("SELECT items FROM orders").fetchall()
+    rows = conn.execute(
+        "SELECT p.name AS name, COALESCE(SUM(oi.quantity), 0) AS count "
+        "FROM order_items oi "
+        "JOIN products p ON p.id = oi.product_id "
+        "GROUP BY oi.product_id, p.name "
+        "ORDER BY count DESC, oi.product_id DESC LIMIT 5"
+    ).fetchall()
     conn.close()
-
-    product_counts = {}
-    for row in orders_rows:
-        try:
-            items = json.loads(row["items"])
-            for item in items:
-                pid   = str(item.get("id", ""))
-                name  = item.get("name", f"Product {pid}")
-                qty   = item.get("qty", item.get("quantity", 1))
-                key   = (pid, name)
-                product_counts[key] = product_counts.get(key, 0) + qty
-        except Exception:
-            continue
-
-    sorted_products = sorted(product_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-    result = [{"name": k[1], "count": v} for k, v in sorted_products]
-    return jsonify(result)
+    return jsonify([{"name": r["name"], "count": r["count"]} for r in rows])
 
 
 @app.route("/api/admin/audit-log")
@@ -1612,18 +1782,38 @@ def login():
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
 
-    hashed = hash_password(password)
     conn   = get_db()
     user   = conn.execute(
-        "SELECT * FROM users WHERE username = ? AND password = ?", (username, hashed)
+        "SELECT * FROM users WHERE username = ? AND COALESCE(disabled, 0) = 0", (username,)
     ).fetchone()
-    conn.close()
-
     if user:
+        valid_pw, needs_upgrade = verify_password(password, user["password"])
+        if not valid_pw:
+            conn.close()
+            return jsonify({"error": "Invalid username or password"}), 401
+
+        if needs_upgrade:
+            upgraded_hash = hash_password(password)
+            conn.execute("UPDATE users SET password = ? WHERE id = ?", (upgraded_hash, user["id"]))
+            conn.commit()
+
+        session.clear()
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["role"] = user["role"]
+        session["csrf_token"] = secrets.token_urlsafe(32)
+        conn.close()
         return jsonify({"message": "success", "role": user["role"],
                         "username": user["username"]}), 200
     else:
+        conn.close()
         return jsonify({"error": "Invalid username or password"}), 401
+
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out"}), 200
 
 
 # ===========================

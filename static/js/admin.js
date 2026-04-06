@@ -20,11 +20,23 @@
 
   // ── Guard ─────────────────────────────────────────────────────
   if (getRole() !== 'admin') {
-    document.body.innerHTML =
-      '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;">' +
-      '<div style="text-align:center"><h2 style="margin-bottom:12px">Access Denied</h2>' +
-      '<p style="color:#888;margin-bottom:20px">You must be logged in as an admin.</p>' +
-      '<a href="/login" style="color:#c8a96e;text-decoration:none;font-weight:600">Go to Login</a></div></div>';
+    fetch('/api/me')
+      .then(function (r) {
+        if (!r.ok) throw new Error('unauthorized');
+        return r.json();
+      })
+      .then(function (me) {
+        if (me.role === 'admin') {
+          localStorage.setItem('user_role', me.role);
+          localStorage.setItem('user_name', me.username);
+          window.location.reload();
+          return;
+        }
+        window.location.href = '/login';
+      })
+      .catch(function () {
+        window.location.href = '/login';
+      });
     return;
   }
 
@@ -132,6 +144,14 @@
   function fmtCurrency(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
   function fmtDate(s)      { return s ? s.split(' ')[0] : '—'; }
   function esc(s)          { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function safeUrl(url) {
+    try {
+      var parsed = new URL(String(url || ''), window.location.origin);
+      return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : '';
+    } catch (e) {
+      return '';
+    }
+  }
 
   var STATUS_COLORS = {
     Pending:   'adm-badge-orange',
@@ -370,7 +390,7 @@
       var checked = selectedProductIds.has(p.id) ? 'checked' : '';
       return '<tr data-testid="product-row-' + p.id + '">' +
         '<td><input type="checkbox" class="prod-check" data-id="' + p.id + '" ' + checked + ' data-testid="checkbox-product-' + p.id + '" /></td>' +
-        '<td><img src="' + esc(p.image) + '" alt="" class="adm-thumb" loading="lazy" /></td>' +
+        '<td><img src="' + safeUrl(p.image) + '" alt="" class="adm-thumb" loading="lazy" /></td>' +
         '<td data-testid="product-name-' + p.id + '"><strong>' + esc(p.name) + '</strong></td>' +
         '<td data-testid="product-code-' + p.id + '">' + esc(p.code || '—') + '</td>' +
         '<td>' + esc(p.category) + '</td>' +
@@ -725,7 +745,7 @@
 
     var itemsHtml = (order.items || []).map(function (item) {
       return '<div class="adm-order-item" data-testid="order-item-' + esc(item.id) + '">' +
-        (item.image ? '<img src="' + esc(item.image) + '" alt="" class="adm-thumb" />' : '') +
+        (item.image ? '<img src="' + safeUrl(item.image) + '" alt="" class="adm-thumb" />' : '') +
         '<div class="adm-order-item-info">' +
           '<strong>' + esc(item.name || 'Item') + '</strong>' +
           '<span>Qty: ' + (item.qty || item.quantity || 1) +
@@ -961,7 +981,7 @@
     tbody.innerHTML = items.map(function (item) {
       var isOut = item.stock === 0;
       return '<tr class="' + (isOut ? 'adm-row-danger' : '') + '" data-testid="inv-row-' + item.id + '">' +
-        '<td><img src="' + esc(item.image) + '" alt="" class="adm-thumb" loading="lazy" /></td>' +
+        '<td><img src="' + safeUrl(item.image) + '" alt="" class="adm-thumb" loading="lazy" /></td>' +
         '<td data-testid="inv-name-' + item.id + '"><strong>' + esc(item.name) + '</strong></td>' +
         '<td>' + esc(item.code || '—') + '</td>' +
         '<td>' + esc(item.category) + '</td>' +
