@@ -1,171 +1,160 @@
-# Veloura Full-Stack Audit Report (Flask + Vanilla JS)
+# Veloura Post-Refactor Audit (Flask + Vanilla JS)
 
-Date: 2026-04-05
-
-## 1) Summary (Overall Health Score)
-
-**Overall health score: 5.6 / 10 (prototype-ready, not production-ready).**
-
-This codebase delivers a broad feature surface (catalog, cart, checkout, reviews, admin dashboards), but the implementation is currently **high-risk for production** due to weak authentication/authorization controls, insecure password strategy, missing data integrity constraints, and monolithic architecture.
+Date: 2026-04-06
+Scope: Code + schema audit after session auth, CSRF, bcrypt, normalization, and modularization refactor.
 
 ---
 
-## 2) Critical Issues (Must Fix Immediately)
+## 1) System Health Score
 
-1. **Admin authorization is fully client-spoofable.**
-   Backend admin checks trust a request header (`X-User-Role`) instead of a server-validated identity/session, so any client can call admin APIs by setting that header. This affects products, orders, users, inventory, and admin messages endpoints.
+**7.4 / 10**
 
-2. **Authentication is insecure and state is client-trusted.**
-   Login returns username/role and frontend stores these in `localStorage`, then uses those client values for privileged requests.
-
-3. **Password hashing uses plain SHA-256 without salt/work factor.**
-   This is vulnerable to offline cracking and does not meet modern password storage best practices.
-
-4. **Stored/reflected XSS risk in product reviews and auth header rendering.**
-   User-supplied review fields and localStorage username are interpolated into `innerHTML` without escaping.
-
-5. **Server is launched with `debug=True`.**
-   This is unsafe for production and may expose internals.
+The security posture is significantly improved versus the pre-refactor state (server session auth, CSRF guard, role checks from session, bcrypt migration logic, safer DOM rendering, normalized order tables in code). However, production readiness is still blocked by architectural and operational gaps (monolithic `app.py`, duplicate admin frontend logic, limited automated verification in this environment, and migration/runtime dependency risks).
 
 ---
 
-## 3) Medium Issues
+## 2) Critical Issues (Remaining)
 
-1. **Monolithic backend architecture (single 1730-line app file).**
-   Routes, schema bootstrapping, migration-like logic, mail, analytics, and business logic are all in one module.
+1. **Runtime dependency risk: `bcrypt` import is hard-required and failed in this environment.**
+   - `services/auth_service.py` imports `bcrypt` at module import time.
+   - If deployment image/environment misses `bcrypt`, app startup fails immediately.
 
-2. **Schema lacks foreign keys and relational integrity.**
-   Orders store `items` as JSON text, reviews reference `product_id` without FK enforcement, and no explicit relational model exists for line items/variants.
+2. **Backend modularization is incomplete (single large `app.py` still owns almost all behavior).**
+   - `routes/*.py` files are blueprint placeholders only.
+   - Most auth/product/order/admin/reset logic still resides in `app.py`.
 
-3. **No pagination on public product APIs and several admin queries.**
-   `/api/products` returns full catalog; contact messages endpoint returns all messages.
-
-4. **Validation is inconsistent and minimal server-side.**
-   Phone/email format checks mostly live in frontend; server accepts many fields with weak constraints.
-
-5. **Inefficient analytics queries.**
-   Sales chart runs one SQL query per day (30 queries); top-products parses JSON for every order row in Python.
-
-6. **Duplicate/overlapping admin logic in two frontend bundles.**
-   Admin logic appears in `script.js` and `admin.js`, increasing maintenance and drift risk.
+3. **Database migration may not have been executed in deployed DB snapshot.**
+   - Repository `database.db` currently lacks `order_items` and `product_variants` tables even though code expects/creates them at startup.
+   - If startup migration is skipped/blocked in production, normalized features will break.
 
 ---
 
-## 4) Minor Improvements
+## 3) Regression Bugs / Behavior Risks
 
-1. Replace large inline page styles/scripts with modular static assets (checkout page has extensive inline CSS/JS).
-2. Standardize category taxonomy (`Kurthi`, `kurtis`, hard-coded name heuristics) and move classification logic to normalized data.
-3. Add image optimization pipeline (responsive `srcset`, modern formats) for heavy visual catalog pages.
-4. Reduce repeated DOM/string template code; move toward componentized rendering helpers.
-5. Add automated tests (API contract tests, auth tests, critical flows).
+### A) Regression Test Analysis (requested flows)
+- **Login / Register flow:** API endpoints are present and session-based; login sets server session user + role + csrf token.
+- **Session persistence across pages:** `/api/me` is implemented and `syncAuthFromServer()` hydrates client storage.
+- **Admin access control:** admin API checks use server session role (`require_admin_session()`), not header trust.
+- **Product CRUD:** endpoints exist and are admin-gated.
+- **Cart & wishlist:** still localStorage-driven on frontend.
+- **Checkout + order creation:** API persists normalized `order_items` and links variants.
+- **WhatsApp integration:** client opens `wa.me` URL post-order.
+- **Forgot/reset flow:** token creation + expiration checks exist.
 
----
-
-## 5) Security Risks (Separate Section)
-
-### A. Authentication & Authorization
-- **Critical:** `require_admin()` validates only `X-User-Role` header.
-- Frontend writes `user_role` and `user_name` to localStorage after login and sends them as authority.
-- Account disable flag exists in schema but login query does not enforce `disabled = 0`.
-
-### B. Password & Account Security
-- **Critical:** SHA-256 only (`hashlib.sha256`) with no per-user salt/work factor.
-- Password minimum length of 6 is weak.
-- No visible lockout/rate limiting on login or reset endpoints.
-
-### C. XSS
-- Review rendering injects unescaped `username`, `comment`, and `image_url` into `innerHTML`.
-- Header auth widget injects localStorage username via `innerHTML`.
-
-### D. Token Handling / Reset
-- Reset tokens are random and expiring (good), but stored in plaintext DB (acceptable for prototypes; stronger to store hashed token).
-- Error from SMTP is returned directly to client with exception string.
-
-### E. CSRF / CORS / API Hardening
-- Global CORS is enabled without explicit origin restrictions.
-- No CSRF strategy for state-changing endpoints.
-- No security headers policy (CSP/HSTS/etc.) or request rate limiting.
-
-### F. SQL Injection
-- Most SQL is parameterized (`?` placeholders) and dynamic SQL pieces are built from fixed clauses.
-- Current SQLi risk appears low, but preserve strict allowlists and avoid string-building expansion.
+### B) Regressions / inconsistencies found
+1. **Duplicate admin implementations still active** (`script.js` + `admin.js` both loaded in `admin.html`), causing maintenance drift and potential double-binding/duplicate network calls.
+2. **Legacy role headers still sent by frontend** (`X-User-Role`, `X-Username`) even though backend no longer trusts them for auth. Security is improved, but client/server contract is noisy and confusing.
+3. **Checkout quantity risk:** checkout total calculation is per item entry and does not clearly model quantity in checkout view code path (can diverge if cart format evolves).
+4. **Potential silent UI failures:** many frontend `.catch(function () {})` blocks hide errors without user feedback.
 
 ---
 
-## 6) Performance Improvements
+## 4) Security Gaps (Post-Upgrade)
 
-1. **API & DB**
-   - Add pagination/filters for `/api/products` and messages APIs.
-   - Add indexes: `orders(created_at)`, `orders(status, created_at)`, `users(username)`, `users(email)`, `products(category, active, stock)`, `password_resets(token, expires_at)`.
-   - Replace N+1 daily sales loop with grouped SQL query by date.
-   - Move top-products to normalized `order_items` table + aggregate SQL.
+## Auth + Session Validation
+- ✅ Session-based auth is implemented (`session["user_id"]`, `session["username"]`, `session["role"]`).
+- ✅ `/api/me` returns authenticated state from server session.
+- ✅ `/api/logout` clears session.
+- ✅ Admin authorization reads server session role, not client role header.
 
-2. **Frontend**
-   - Keep lazy-loading on all product/card images consistently.
-   - Serve compressed/resized images; avoid large originals for thumbnails.
-   - Reduce long initial JS payload by splitting page-specific logic.
+### Remaining gaps
+1. **Audit log actor spoofing risk (non-auth critical):** `get_actor_from_session()` falls back to `X-Username` header when session username is absent. This can taint audit trail attribution for unauthenticated mutations that still log actions.
+2. **Reset-password email error leakage:** SMTP exception details are returned directly to clients.
+3. **No explicit login/reset throttling or lockout controls in code.**
 
-3. **Runtime**
-   - Add WSGI server (gunicorn/uwsgi), caching strategy, and background jobs for email.
+## CSRF Validation
+- ✅ Global `before_request` enforces CSRF for all mutating `/api/*` routes except `/api/csrf-token`.
+- ✅ Frontend wraps `fetch` to auto-attach `X-CSRF-Token` for mutating same-origin API requests.
 
----
-
-## 7) Suggested Refactoring Plan
-
-### Phase 1 (Security Stabilization)
-1. Introduce real auth: server-side session (Flask-Login) or signed JWT with server verification.
-2. Replace header-based admin checks with decorator validating authenticated user role from trusted token/session.
-3. Migrate password hashing to `bcrypt`/`argon2` with adaptive cost.
-4. Fix XSS vectors by escaping/sanitizing all untrusted data before HTML insertion.
-5. Disable debug mode; add secure env-based configuration.
-
-### Phase 2 (Architecture)
-1. Split monolith into modules:
-   - `routes/` (auth, products, orders, admin)
-   - `services/` (auth, orders, notifications)
-   - `models/` or repository layer
-   - `db/migrations/`
-2. Move inline checkout JS/CSS into `static/js/checkout.js` and `static/css/checkout.css`.
-3. Consolidate admin JS into a single source of truth (`admin.js`) and remove admin logic from global script.
-
-### Phase 3 (Data Model)
-1. Normalize schema with FKs:
-   - `orders`
-   - `order_items(order_id, product_id, variant_id, qty, unit_price)`
-   - `product_variants(product_id, size, color, sku, stock)`
-2. Add migration tool (Alembic/Flask-Migrate).
-3. Add constraints and indexes.
-
-### Phase 4 (Operational Hardening)
-1. Centralized logging and error monitoring.
-2. CI pipeline with tests + lint + security checks.
-3. Add rate limiting and abuse protections.
-4. Document deployment and incident response runbooks.
+### Remaining gaps
+1. **Token lifecycle is session-bound only; no explicit age/rotation policy beyond session clear/login reset.**
+2. **Frontend token cache retry behavior is limited:** if session/token rotates server-side, first mutating request fails 403 without automatic token refresh-and-retry.
 
 ---
 
-## 8) Final Production Checklist
+## 5) Database Consistency & Migration Status
 
-- [ ] Replace SHA-256 with Argon2/bcrypt and migrate existing hashes.
-- [ ] Implement real authenticated sessions/JWT; remove trust in client role headers.
-- [ ] Enforce RBAC server-side for all admin endpoints.
-- [ ] Fix XSS in reviews/auth header rendering; add CSP.
-- [ ] Disable Flask debug; add environment-based config and secret management.
-- [ ] Restrict CORS origins and add CSRF strategy.
-- [ ] Add DB migrations + foreign keys + indexes.
-- [ ] Normalize orders/variants data model.
-- [ ] Add API pagination and request validation schemas.
-- [ ] Add test coverage for auth, checkout, admin, and reset flows.
-- [ ] Add structured logging/monitoring and production WSGI setup.
+### In code (good)
+- `order_items` + `product_variants` tables include FKs and indexes.
+- Migration logic exists for legacy JSON `orders.items` -> normalized `order_items` rows.
+- `get_or_create_variant()` normalizes missing variant combinations at order time.
+
+### Risks / findings
+1. **Current repository DB snapshot appears pre-normalization** (missing normalized tables), indicating migration state drift between code and artifact.
+2. **Migration correctness cannot be fully proven from static review alone in this environment due app startup dependency issue (`bcrypt` import failure).**
 
 ---
 
-## Appendix: What is implemented today
+## 6) Backend Structure Audit
 
-- Multi-page frontend with templates for landing/shop/product/cart/wishlist/checkout/login/admin.
-- Product catalog with sizes/colors and optional image maps.
-- Cart/wishlist in browser storage.
-- Checkout flow posting orders and opening WhatsApp order summary.
-- Admin dashboard with products/orders/users/inventory/messages + chart widgets.
-- Password reset email workflow with token expiration.
+- **Expected target:** `db/`, `services/`, `routes/` modular architecture.
+- **Current reality:**
+  - `db/models.py` and `services/auth_service.py` are used.
+  - `routes/` modules are placeholders and not carrying endpoint logic.
+  - `app.py` still contains route handlers, DB initialization/migration, mail logic, seed logic, analytics, and business rules.
 
+**Verdict:** partial modularization only.
+
+---
+
+## 7) Frontend–Backend Integration Audit
+
+- ✅ `syncAuthFromServer()` exists and updates local state from `/api/me`.
+- ✅ Global fetch wrapper injects CSRF token on mutating API requests.
+- ⚠️ Admin frontend still sends old trust headers and duplicates admin logic across two files.
+- ⚠️ Error messaging is inconsistent; several API failures are swallowed.
+
+---
+
+## 8) Error Handling Quality
+
+### Good
+- Backend returns structured JSON errors for most validation failures.
+- CSRF failures consistently return 403 JSON.
+
+### Problems
+- Frontend silent catches reduce observability and user trust.
+- Forgot-password endpoint exposes internal exception strings.
+
+---
+
+## 9) Performance Check
+
+1. **N+1 query pattern in `/api/admin/chart/sales`:** one query per day (30 queries).
+2. **Very large monolith app startup path includes heavy seed/backfill checks.**
+3. **Admin JS duplication can trigger redundant UI/event/fetch work.**
+
+---
+
+## 10) Edge Case Review
+
+- **Empty cart checkout:** server rejects (`items and total are required`) when no items.
+- **Invalid reset token:** server rejects.
+- **Expired CSRF token/session mismatch:** server returns 403.
+- **Unauthorized admin access:** blocked by session role checks.
+- **Missing product variants:** backend auto-creates variant rows via `get_or_create_variant()`.
+
+---
+
+## 11) Final Fix Recommendations
+
+1. **Complete modularization now:** migrate route handlers out of `app.py` into blueprint modules and register them.
+2. **Remove legacy admin/header patterns from frontend:** eliminate `X-User-Role`/`X-Username` usage and old admin code in `script.js`.
+3. **Harden dependency/runtime checks:** pin and verify `bcrypt` in build; add startup health checks.
+4. **Strengthen CSRF lifecycle UX:** auto-refresh token on 403 and retry once for mutating requests.
+5. **Improve security hardening:** login/reset rate limiting, generic SMTP error responses, tighter CORS policy, add security headers.
+6. **Optimize admin analytics queries:** aggregate sales with grouped SQL instead of per-day loop.
+7. **Add automated regression suite:** auth/session/CSRF/admin/order normalization edge cases.
+8. **Run and verify one-time migration in real prod DB snapshot before deploy cutover.**
+
+---
+
+## 12) Production Readiness Verdict
+
+**Not yet production-ready.**
+
+The refactor materially improved security correctness, but deployment should wait until:
+- runtime dependency/install reliability is guaranteed (`bcrypt`),
+- modularization debt and duplicated admin code are resolved,
+- migration state is verified against the actual production DB,
+- and automated post-refactor regression tests are in place.
