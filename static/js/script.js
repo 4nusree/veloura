@@ -113,6 +113,21 @@
 // ===========================
 var _toastTimer = null;
 
+function sanitizeText(value) {
+  if (value === null || value === undefined) return '';
+  return String(value);
+}
+
+function sanitizeUrl(url) {
+  try {
+    var parsed = new URL(String(url || ''), window.location.origin);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch (e) {}
+  return '';
+}
+
 function showToast(message, isError) {
   var toast = document.getElementById('toast');
   if (!toast) return;
@@ -124,6 +139,75 @@ function showToast(message, isError) {
   }, 3000);
 }
 
+// ===========================
+// CSRF HELPERS + FETCH WRAPPER
+// ===========================
+var _csrfToken = null;
+var _csrfPromise = null;
+var _rawFetch = window.fetch.bind(window);
+
+function fetchCsrfToken() {
+  if (_csrfToken) return Promise.resolve(_csrfToken);
+  if (_csrfPromise) return _csrfPromise;
+  _csrfPromise = _rawFetch('/api/csrf-token', { method: 'GET', credentials: 'same-origin' })
+    .then(function (res) {
+      if (!res.ok) throw new Error('csrf-token-failed');
+      return res.json();
+    })
+    .then(function (data) {
+      _csrfToken = data.csrf_token || null;
+      return _csrfToken;
+    })
+    .finally(function () {
+      _csrfPromise = null;
+    });
+  return _csrfPromise;
+}
+
+(function wrapFetchForCsrf() {
+  if (window.__velouraFetchWrapped) return;
+  window.__velouraFetchWrapped = true;
+
+  function isMutating(method) {
+    return ['POST', 'PUT', 'PATCH', 'DELETE'].indexOf(method) !== -1;
+  }
+
+  window.fetch = function (input, init) {
+    init = init || {};
+    var method = (init.method || 'GET').toUpperCase();
+    var reqUrl = typeof input === 'string' ? input : (input && input.url) || '';
+    var parsed;
+    try { parsed = new URL(reqUrl, window.location.origin); } catch (e) { return _rawFetch(input, init); }
+
+    var isSameOrigin = parsed.origin === window.location.origin;
+    var isApi = parsed.pathname.indexOf('/api/') === 0;
+    var needsCsrf = isSameOrigin && isApi && parsed.pathname !== '/api/csrf-token' && isMutating(method);
+
+    function runWithHandling(finalInit) {
+      return _rawFetch(input, finalInit).then(function (res) {
+        if (res.status === 403) {
+          if (typeof showToast === 'function') {
+            showToast('Session expired. Please refresh.', true);
+          } else {
+            window.alert('Session expired. Please refresh.');
+          }
+        }
+        return res;
+      });
+    }
+
+    if (!needsCsrf) return runWithHandling(init);
+
+    return fetchCsrfToken().then(function (token) {
+      var headers = new Headers(init.headers || {});
+      if (token) headers.set('X-CSRF-Token', token);
+      return runWithHandling(Object.assign({}, init, { headers: headers }));
+    });
+  };
+})();
+
+fetchCsrfToken().catch(function () {});
+
 
 // ===========================
 // AUTH HELPERS
@@ -132,33 +216,100 @@ function getRole()     { return localStorage.getItem('user_role') || null; }
 function getUsername() { return localStorage.getItem('user_name') || null; }
 
 function logout() {
-  localStorage.removeItem('user_role');
-  localStorage.removeItem('user_name');
-  window.location.href = '/';
+  fetch('/api/logout', { method: 'POST' })
+    .catch(function () {})
+    .finally(function () {
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('user_name');
+      window.location.href = '/';
+    });
 }
 
 function updateAuthHeader() {
   var el = document.getElementById('auth-action');
   if (!el) return;
   var role = getRole();
+  el.textContent = '';
   if (role) {
-    var name = getUsername() || 'Account';
-    el.innerHTML =
-      '<span class="auth-username" data-testid="text-auth-username">' + name + '</span>' +
-      '<button class="login-btn logout-btn" data-testid="button-logout" onclick="logout()">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
-        '<span>Logout</span>' +
-      '</button>';
+    var name = sanitizeText(getUsername() || 'Account');
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'auth-username';
+    nameSpan.setAttribute('data-testid', 'text-auth-username');
+    nameSpan.textContent = name;
+
+    var logoutBtn = document.createElement('button');
+    logoutBtn.className = 'login-btn logout-btn';
+    logoutBtn.setAttribute('data-testid', 'button-logout');
+    logoutBtn.addEventListener('click', logout);
+
+    var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    icon.setAttribute('width', '18');
+    icon.setAttribute('height', '18');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('stroke-width', '1.8');
+    icon.setAttribute('stroke-linecap', 'round');
+    icon.setAttribute('stroke-linejoin', 'round');
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>';
+
+    var txt = document.createElement('span');
+    txt.textContent = 'Logout';
+    logoutBtn.appendChild(icon);
+    logoutBtn.appendChild(txt);
+
+    el.appendChild(nameSpan);
+    el.appendChild(logoutBtn);
   } else {
-    el.innerHTML =
-      '<a href="/login" class="login-btn" data-testid="button-login">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
-        '<span>Login</span>' +
-      '</a>';
+    var loginLink = document.createElement('a');
+    loginLink.href = '/login';
+    loginLink.className = 'login-btn';
+    loginLink.setAttribute('data-testid', 'button-login');
+
+    var loginIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    loginIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    loginIcon.setAttribute('width', '20');
+    loginIcon.setAttribute('height', '20');
+    loginIcon.setAttribute('viewBox', '0 0 24 24');
+    loginIcon.setAttribute('fill', 'none');
+    loginIcon.setAttribute('stroke', 'currentColor');
+    loginIcon.setAttribute('stroke-width', '1.8');
+    loginIcon.setAttribute('stroke-linecap', 'round');
+    loginIcon.setAttribute('stroke-linejoin', 'round');
+    loginIcon.setAttribute('aria-hidden', 'true');
+    loginIcon.innerHTML = '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>';
+
+    var loginText = document.createElement('span');
+    loginText.textContent = 'Login';
+
+    loginLink.appendChild(loginIcon);
+    loginLink.appendChild(loginText);
+    el.appendChild(loginLink);
   }
 }
 
-updateAuthHeader();
+function syncAuthFromServer() {
+  fetch('/api/me')
+    .then(function (res) {
+      if (!res.ok) throw new Error('not-authenticated');
+      return res.json();
+    })
+    .then(function (me) {
+      localStorage.setItem('user_role', me.role);
+      localStorage.setItem('user_name', me.username);
+    })
+    .catch(function () {
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('user_name');
+    })
+    .finally(function () {
+      updateAuthHeader();
+    });
+}
+
+syncAuthFromServer();
 
 
 // ===========================
@@ -584,7 +735,23 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
 
   var role = getRole();
   if (role !== 'admin') {
-    window.location.href = '/login';
+    fetch('/api/me')
+      .then(function (res) {
+        if (!res.ok) throw new Error('unauthorized');
+        return res.json();
+      })
+      .then(function (me) {
+        if (me.role === 'admin') {
+          localStorage.setItem('user_role', me.role);
+          localStorage.setItem('user_name', me.username);
+          window.location.reload();
+        } else {
+          window.location.href = '/login';
+        }
+      })
+      .catch(function () {
+        window.location.href = '/login';
+      });
     return;
   }
 
@@ -943,27 +1110,49 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
     var table = document.createElement('table');
     table.className = 'orders-table';
     table.setAttribute('data-testid', 'orders-table');
-    table.innerHTML =
-      '<thead><tr>' +
-        '<th>Order ID</th>' +
-        '<th>Username</th>' +
-        '<th>Items</th>' +
-        '<th>Total</th>' +
-        '<th>Date</th>' +
-      '</tr></thead>';
+    var thead = document.createElement('thead');
+    var htr = document.createElement('tr');
+    ['Order ID', 'Username', 'Items', 'Total', 'Date'].forEach(function (title) {
+      var th = document.createElement('th');
+      th.textContent = title;
+      htr.appendChild(th);
+    });
+    thead.appendChild(htr);
+    table.appendChild(thead);
     var tbody = document.createElement('tbody');
     orders.forEach(function (o) {
       var itemNames = Array.isArray(o.items)
-        ? o.items.map(function (i) { return i.name; }).join(', ')
+        ? o.items.map(function (i) { return sanitizeText(i.name); }).join(', ')
         : '—';
       var tr = document.createElement('tr');
       tr.setAttribute('data-testid', 'order-row-' + o.id);
-      tr.innerHTML =
-        '<td data-testid="text-order-id-' + o.id + '">#' + o.id + '</td>' +
-        '<td data-testid="text-order-user-' + o.id + '">' + o.username + '</td>' +
-        '<td class="orders-items-cell" data-testid="text-order-items-' + o.id + '">' + itemNames + '</td>' +
-        '<td data-testid="text-order-total-' + o.id + '">₹' + o.total.toLocaleString('en-IN') + '</td>' +
-        '<td data-testid="text-order-date-' + o.id + '">' + formatDate(o.created_at) + '</td>';
+
+      var idTd = document.createElement('td');
+      idTd.setAttribute('data-testid', 'text-order-id-' + o.id);
+      idTd.textContent = '#' + o.id;
+
+      var userTd = document.createElement('td');
+      userTd.setAttribute('data-testid', 'text-order-user-' + o.id);
+      userTd.textContent = sanitizeText(o.username);
+
+      var itemsTd = document.createElement('td');
+      itemsTd.className = 'orders-items-cell';
+      itemsTd.setAttribute('data-testid', 'text-order-items-' + o.id);
+      itemsTd.textContent = itemNames;
+
+      var totalTd = document.createElement('td');
+      totalTd.setAttribute('data-testid', 'text-order-total-' + o.id);
+      totalTd.textContent = '₹' + Number(o.total || 0).toLocaleString('en-IN');
+
+      var dateTd = document.createElement('td');
+      dateTd.setAttribute('data-testid', 'text-order-date-' + o.id);
+      dateTd.textContent = formatDate(o.created_at);
+
+      tr.appendChild(idTd);
+      tr.appendChild(userTd);
+      tr.appendChild(itemsTd);
+      tr.appendChild(totalTd);
+      tr.appendChild(dateTd);
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
@@ -1041,13 +1230,36 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
     card.href = '/product?id=' + p.id;
     card.className = 'pd-extra-card';
     card.setAttribute('data-testid', 'card-similar-' + p.id);
-    card.innerHTML =
-      '<div class="pd-extra-card-img"><img src="' + p.image + '" alt="' + p.name + '" loading="lazy" /></div>' +
-      '<div class="pd-extra-card-info">' +
-        '<p class="pd-extra-card-cat">' + p.category + '</p>' +
-        '<p class="pd-extra-card-name">' + p.name + '</p>' +
-        '<p class="pd-extra-card-price">' + formatPrice(p.price) + '</p>' +
-      '</div>';
+
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'pd-extra-card-img';
+    var img = document.createElement('img');
+    img.src = sanitizeUrl(p.image);
+    img.alt = sanitizeText(p.name);
+    img.loading = 'lazy';
+    imgWrap.appendChild(img);
+
+    var info = document.createElement('div');
+    info.className = 'pd-extra-card-info';
+
+    var cat = document.createElement('p');
+    cat.className = 'pd-extra-card-cat';
+    cat.textContent = sanitizeText(p.category);
+
+    var name = document.createElement('p');
+    name.className = 'pd-extra-card-name';
+    name.textContent = sanitizeText(p.name);
+
+    var price = document.createElement('p');
+    price.className = 'pd-extra-card-price';
+    price.textContent = formatPrice(p.price);
+
+    info.appendChild(cat);
+    info.appendChild(name);
+    info.appendChild(price);
+
+    card.appendChild(imgWrap);
+    card.appendChild(info);
     return card;
   }
 
@@ -1453,10 +1665,24 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
         var pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
         var row = document.createElement('div');
         row.className = 'pd-bar-row';
-        row.innerHTML =
-          '<span class="pd-bar-label">' + s + '★</span>' +
-          '<div class="pd-bar-track"><div class="pd-bar-fill" style="width:' + pct + '%"></div></div>' +
-          '<span class="pd-bar-count">' + cnt + '</span>';
+        var barLabel = document.createElement('span');
+        barLabel.className = 'pd-bar-label';
+        barLabel.textContent = s + '★';
+
+        var track = document.createElement('div');
+        track.className = 'pd-bar-track';
+        var fill = document.createElement('div');
+        fill.className = 'pd-bar-fill';
+        fill.style.width = pct + '%';
+        track.appendChild(fill);
+
+        var barCount = document.createElement('span');
+        barCount.className = 'pd-bar-count';
+        barCount.textContent = String(cnt);
+
+        row.appendChild(barLabel);
+        row.appendChild(track);
+        row.appendChild(barCount);
         barsEl.appendChild(row);
       }
     }
@@ -1474,24 +1700,61 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
           var card = document.createElement('div');
           card.className = 'pd-review-card';
           card.setAttribute('data-testid', 'review-card-' + rev.id);
-          var starsHtml = '';
-          for (var i = 1; i <= 5; i++) {
-            starsHtml += '<span class="pd-star ' + (i <= rev.rating ? 'pd-star--full' : 'pd-star--empty') + '">★</span>';
-          }
+
+          var top = document.createElement('div');
+          top.className = 'pd-review-top';
+
+          var meta = document.createElement('div');
+          meta.className = 'pd-review-meta';
+
+          var author = document.createElement('span');
+          author.className = 'pd-review-author';
+          author.setAttribute('data-testid', 'text-review-author-' + rev.id);
+          author.textContent = sanitizeText(rev.username);
+
           var date = rev.created_at ? rev.created_at.split(' ')[0] : '';
-          var imgHtml = rev.image_url
-            ? '<div class="pd-review-img"><img src="' + rev.image_url + '" alt="Customer photo" loading="lazy" data-testid="img-review-' + rev.id + '" /></div>'
-            : '';
-          card.innerHTML =
-            '<div class="pd-review-top">' +
-              '<div class="pd-review-meta">' +
-                '<span class="pd-review-author" data-testid="text-review-author-' + rev.id + '">' + rev.username + '</span>' +
-                '<span class="pd-review-date" data-testid="text-review-date-' + rev.id + '">' + date + '</span>' +
-              '</div>' +
-              '<div class="pd-review-stars" data-testid="stars-review-' + rev.id + '">' + starsHtml + '</div>' +
-            '</div>' +
-            (rev.comment ? '<p class="pd-review-comment" data-testid="text-review-comment-' + rev.id + '">' + rev.comment + '</p>' : '') +
-            imgHtml;
+          var dateEl = document.createElement('span');
+          dateEl.className = 'pd-review-date';
+          dateEl.setAttribute('data-testid', 'text-review-date-' + rev.id);
+          dateEl.textContent = sanitizeText(date);
+
+          meta.appendChild(author);
+          meta.appendChild(dateEl);
+
+          var starsWrap = document.createElement('div');
+          starsWrap.className = 'pd-review-stars';
+          starsWrap.setAttribute('data-testid', 'stars-review-' + rev.id);
+          for (var i = 1; i <= 5; i++) {
+            var star = document.createElement('span');
+            star.className = 'pd-star ' + (i <= rev.rating ? 'pd-star--full' : 'pd-star--empty');
+            star.textContent = '★';
+            starsWrap.appendChild(star);
+          }
+
+          top.appendChild(meta);
+          top.appendChild(starsWrap);
+          card.appendChild(top);
+
+          if (rev.comment) {
+            var comment = document.createElement('p');
+            comment.className = 'pd-review-comment';
+            comment.setAttribute('data-testid', 'text-review-comment-' + rev.id);
+            comment.textContent = sanitizeText(rev.comment);
+            card.appendChild(comment);
+          }
+
+          var safeReviewImage = sanitizeUrl(rev.image_url);
+          if (safeReviewImage) {
+            var revImgWrap = document.createElement('div');
+            revImgWrap.className = 'pd-review-img';
+            var revImg = document.createElement('img');
+            revImg.src = safeReviewImage;
+            revImg.alt = 'Customer photo';
+            revImg.loading = 'lazy';
+            revImg.setAttribute('data-testid', 'img-review-' + rev.id);
+            revImgWrap.appendChild(revImg);
+            card.appendChild(revImgWrap);
+          }
           listEl.appendChild(card);
         });
       }
@@ -1525,9 +1788,10 @@ function bindImagePreview(inputId, previewWrapId, previewImgId, statusId) {
     if (!form) return;
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name    = (document.getElementById('review-name').value || '').trim() || 'Anonymous';
-      var comment = (document.getElementById('review-comment').value || '').trim();
-      var imgUrl  = (document.getElementById('review-image-url').value || '').trim();
+      var name    = sanitizeText((document.getElementById('review-name').value || '').trim() || 'Anonymous');
+      var comment = sanitizeText((document.getElementById('review-comment').value || '').trim());
+      var rawImg  = (document.getElementById('review-image-url').value || '').trim();
+      var imgUrl  = sanitizeUrl(rawImg);
 
       if (errorEl) errorEl.style.display = 'none';
 

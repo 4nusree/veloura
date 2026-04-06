@@ -88,6 +88,17 @@
         document.getElementById('email').classList.remove('input-error');
       }
 
+      var csrfToken = null;
+      function getCsrfToken() {
+        if (csrfToken) return Promise.resolve(csrfToken);
+        return fetch('/api/csrf-token')
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            csrfToken = data.csrf_token || '';
+            return csrfToken;
+          });
+      }
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         clearErrors();
@@ -103,10 +114,13 @@
         btn.textContent  = 'Sending…';
         msgBox.style.display = 'none';
 
-        fetch('/api/forgot-password', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email: email })
+        getCsrfToken()
+        .then(function (token) {
+          return fetch('/api/forgot-password', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+            body:    JSON.stringify({ email: email })
+          });
         })
         .then(function (res) { return res.json(); })
         .then(function (data) {
